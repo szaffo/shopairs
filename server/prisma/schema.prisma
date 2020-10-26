@@ -15,18 +15,19 @@ model User {
   email   String   @unique
   password String
   name    String?
-  pair    Pair?     @relation(fields: [pairId], references: [id])
-  pairId  Int?
   updated_at DateTime @updatedAt
   created_at DateTime @default(now())
+  createdPair Pair? @relation("CreatorUser")
+  joinnedToPair Pair? @relation("JoinnerUser")
 }
 
 model Pair {
   id Int @default(autoincrement()) @id
   pair1_id Int
   pair2_id Int?
-  users User[]
-  connection_code String
+  creator User @relation("CreatorUser", fields: [pair1_id], references: [id])
+  joinner User? @relation("JoinnerUser", fields: [pair2_id], references: [id])
+  connection_code String?
   updated_at DateTime @updatedAt
   created_at DateTime @default(now())
 }

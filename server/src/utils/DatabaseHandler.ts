@@ -15,35 +15,44 @@ export default class DatabaseHandler {
     this.prisma = new PrismaClient();
   }
 
-  registerUser(email: string, password: string, name?: string): Promise<User> {
-    return this.prisma.user.create({
-      data: { email, password, name },
+  async registerUser(email: string, password: string, name?: string): Promise<User> {
+    // TODO Check if user already exists
+    return await this.prisma.user.create({
+      data: { email, password, name }, // TODO Strore hashed password
     });
   }
 
   async createNewPair(
-    email: string,
-    password: string
-  ): Promise<Pair | DatabaseError> {
+      email: string,
+      password: string
+    ): Promise<Pair | DatabaseError> {
+    
+    // Find the user in the database (also authentication)
     const user = await this.prisma.user.findFirst({
       where: { email, password },
-      select: { id: true, pair: true },
+      select: {
+        id: true,
+        createdPair: true,
+        joinnedToPair: true
+      },
     });
 
     if (user) {
-      const pair = user.pair;
-      if (pair) {
+      if (user.createdPair || user.joinnedToPair) {
         return new DatabaseError("The user already has a pair.");
-      } else {
-        const pair = await this.prisma.pair.create({
+      } else { // User does not belongs to a pair
+        // Creating a new pair
+        return await this.prisma.pair.create({
           data: {
-            pair1_id: user.id,
-            connection_code: "DUMMY",
+            creator: {
+              connect: { id: user.id }
+            },
+            connection_code: "DUMMY", // TODO Create code creator
           },
         });
-        return pair;
       }
-    } else {
+
+    } else { // User not found with the given email & pw
       throw new DatabaseError(
         "User authentication failed, or the user does not exists."
       );
