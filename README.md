@@ -54,3 +54,8 @@ Első lépésként egy rövid feladatleírást kell megadni a projekt Github fő
 * feladat nem funkcionális követelményei
 * szakterületi fogalomjegyzék (azon fogalmak definiálása, ami köré az alkalmazás épül)
 * szerepkörök
+
+## Adatbázis parancsok
+```bash
+npx prisma migrate up --experimental
+```
