@@ -8,7 +8,7 @@ export default class SocketEventHandler {
 
   private listen(): void {
     this.io.on("connection", (socket: SocketIO.Socket) => {
-      console.log(socket)
+      console.log(socket);
     });
   }
 }

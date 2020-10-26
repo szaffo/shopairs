@@ -1,6 +1,7 @@
 import http from "http";
 import socketIO from "socket.io";
 import SocketEventHandler from "./utils/SocketEventHandler";
+import DatabaseHandler from "./utils/DatabaseHandler";
 
 const port: number = 3000;
 
@@ -23,3 +24,6 @@ class Server {
 }
 
 new Server(port).start();
+new DatabaseHandler().registerUser("anyad@anyad.com", "titok").then(() => {
+  new DatabaseHandler().createNewPair("anyad@anyad.com", "titok");
+});
