@@ -24,6 +24,15 @@ class Server {
 }
 
 new Server(port).start();
-new DatabaseHandler().registerUser("anyad@anyad.com", "titok").then(() => {
-  new DatabaseHandler().createNewPair("anyad@anyad.com", "titok");
-});
+const db = new DatabaseHandler()
+db.createNewPair('teszter3@eszter.com', 'pawSword').then((pair) => {
+  console.log(pair)
+})
+
+// hashPassword('titkosbéla').then((hash) => {
+//   console.log(hash)
+
+//   comparePassword('titkosbéla', hash).then((succes) => {
+//     console.log(succes)
+//   })
+// })
