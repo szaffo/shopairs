@@ -4,7 +4,7 @@ import { generator } from "./codeGenerator";
 
 // TODO Create constants for error messages
 
-class DatabaseError extends Error {
+export class DatabaseError extends Error {
   constructor(message?: string) {
     super(message);
     this.name = "DatabaseError";
@@ -104,7 +104,7 @@ export default class DatabaseHandler {
       // ! Just send back "Email or password is incorrect"
       // ! They don't have to know everything. It's more secure this way.
 
-      if (typeof succes === typeof DatabaseError || !succes) {
+      if (typeof succes === typeof DatabaseError) {
         return new DatabaseError('Email or password is not correct')
       } 
 
@@ -132,6 +132,32 @@ export default class DatabaseHandler {
         } else {
           return new DatabaseError('User does not exists')
         }
+      })
+    })
+  }
+
+  async joinToPair(email: string, password: string, connectionCode: string): Promise<Pair | DatabaseError> {
+    return await this.getUser(email, password).then((user) => {
+      if (user instanceof DatabaseError) {
+        return new DatabaseError('User does not exists or failed to authenticate')
+      }
+
+      if (user.createdPair || user.joinnedToPair) {
+        return new DatabaseError('User already has a pair')
+      }
+
+      return this.prisma.pair.update({
+        where: { connection_code: connectionCode },
+        data: {
+          connection_code: null,
+          joinner: {
+            connect: {
+              id: user.id
+            }
+          }
+        }
+      }).then((pair) => {
+        return pair || new DatabaseError('Pair not found')
       })
     })
   }
