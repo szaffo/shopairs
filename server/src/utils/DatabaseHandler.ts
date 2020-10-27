@@ -1,5 +1,5 @@
 import { Pair, PrismaClient, User } from "@prisma/client";
-import { userInfo } from "os";
+import { comparePassword, hashPassword } from "./passwordHash";
 
 class DatabaseError extends Error {
   constructor(message?: string) {
@@ -17,9 +17,11 @@ export default class DatabaseHandler {
 
   async registerUser(email: string, password: string, name?: string): Promise<User> {
     // TODO Check if user already exists
-    return await this.prisma.user.create({
-      data: { email, password, name }, // TODO Strore hashed password
-    });
+    return await hashPassword(password).then((hash) => {
+      return this.prisma.user.create({
+        data: { email, password: hash, name },
+      });  
+    })
   }
 
   async createNewPair(
