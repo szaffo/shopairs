@@ -47,6 +47,8 @@ export default class DatabaseHandler {
             creator: {
               connect: { id: user.id }
             },
+            // ! This code should be deleted when other user is joinning to the pair
+            // ! to avoid unique constraint fail
             connection_code: generator(),
           },
         }).then((pair) => {
