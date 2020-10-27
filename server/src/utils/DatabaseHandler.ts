@@ -1,5 +1,6 @@
 import { Pair, PrismaClient, User } from "@prisma/client";
 import { comparePassword, hashPassword } from "./passwordHash";
+import { generator } from "./codeGenerator";
 
 // TODO Create constants for error messages
 
@@ -46,7 +47,7 @@ export default class DatabaseHandler {
             creator: {
               connect: { id: user.id }
             },
-            connection_code: "DUMMY", // TODO Create code creator
+            connection_code: generator(),
           },
         }).then((pair) => {
           return pair
