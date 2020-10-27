@@ -158,6 +158,28 @@ export default class DatabaseHandler {
         }
       }).then((pair) => {
         return pair || new DatabaseError('Pair not found')
+      }).catch(() => {
+        return new DatabaseError('Pair not found')
+      })
+    })
+  }
+
+  async deletePair(email: string, password: string): Promise<Pair | DatabaseError> {
+    return await this.getUser(email, password).then((user) => {
+      if (user instanceof DatabaseError) {
+        return user
+      }
+
+      if (!(user.joinnedToPair || user.createdPair)) {
+        return new DatabaseError('User does not have a pair')
+      }
+
+      const pair = user.createdPair || user.joinnedToPair || { id: 0 }
+
+      return this.prisma.pair.delete({
+        where: { id: pair.id }
+      }).then((pair) => {
+        return pair
       })
     })
   }
