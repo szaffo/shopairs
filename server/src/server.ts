@@ -1,7 +1,8 @@
 import http from "http";
 import socketIO from "socket.io";
 import SocketEventHandler from "./utils/SocketEventHandler";
-import DatabaseHandler from "./utils/DatabaseHandler";
+import DatabaseHandler, { DatabaseError } from "./utils/DatabaseHandler";
+import { exit } from "process";
 
 const port: number = 3000;
 
@@ -25,14 +26,3 @@ class Server {
 
 new Server(port).start();
 const db = new DatabaseHandler()
-db.createNewPair('teszter3@eszter.com', 'pawSword').then((pair) => {
-  console.log(pair)
-})
-
-// hashPassword('titkosbéla').then((hash) => {
-//   console.log(hash)
-
-//   comparePassword('titkosbéla', hash).then((succes) => {
-//     console.log(succes)
-//   })
-// })
