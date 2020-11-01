@@ -240,7 +240,7 @@ export default class DatabaseHandler {
           data: {
             name: itemName,
             quantity,
-            belongTo: {
+            belongsTo: {
               connect: {
                 id: list.id
               }
