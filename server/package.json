@@ -8,7 +8,7 @@
     "start": "node dist/server.js",
     "prebuild": "npx prisma generate",
     "build": "tsc -p src",
-    "install": "yes | npx prisma migrate up --experimental"
+    "postinstall": "yes | npx prisma migrate up --experimental"
   },
   "repository": {
     "type": "git",
