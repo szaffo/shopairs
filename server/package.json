@@ -26,6 +26,7 @@
   "devDependencies": {
     "@prisma/cli": "^2.10.0",
     "nodemon": "^2.0.4",
+    "prisma-uml": "^1.1.11",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.3"
   },
