@@ -1,4 +1,4 @@
-import { Pair, PrismaClient, User } from "@prisma/client";
+import { Item, List, Pair, PrismaClient, User } from "@prisma/client";
 import { comparePassword, hashPassword } from "./passwordHash";
 import { generator } from "./codeGenerator";
 
@@ -183,4 +183,111 @@ export default class DatabaseHandler {
       })
     })
   }
+
+  async createList(email: string, password: string, name: string): Promise<List | DatabaseError> {
+      return await this.getUser(email, password).then((user) => {
+        if (user instanceof DatabaseError) {
+          return user
+        }
+
+        const pair = user.createdPair || user.joinnedToPair
+
+        if (!pair) {
+          return new DatabaseError('User does not have a pair')
+        }
+
+        return this.prisma.list.create({
+          data: {
+            name,
+            belongsTo: {
+              connect: {
+                id: pair.id
+              }
+            }
+          }
+        }).then((list) => {
+          return list
+        })
+      })
+  }
+
+  async addItemToList(email: string, password: string, listId: number, itemName: string, quantity?: number): Promise<Item | DatabaseError> {
+    return await this.getUser(email, password).then((user) => {
+      if (user instanceof DatabaseError) {
+        return user
+      }
+
+      const pair = user.createdPair || user.joinnedToPair
+
+      if (!pair) {
+        return new DatabaseError('User does not have a pair')
+      }
+
+      return this.prisma.list.findOne({
+        where: {
+          id: listId
+        }
+      }).then((list) => {
+        if (!list) {
+          return new DatabaseError("List not found")
+        }
+
+        if (list.belongs_to !== pair.id) {
+          return new DatabaseError('List does not belongs to the pair')
+        }
+
+        return this.prisma.item.create({
+          data: {
+            name: itemName,
+            quantity,
+            belongTo: {
+              connect: {
+                id: list.id
+              }
+            }
+          }
+        }).then((item) => {
+          return item || new DatabaseError('') // TODO add description
+        })
+      })
+
+    })
+  }
+
+  async getLists(email: string, password: string): Promise<List[] | DatabaseError> {
+    return await this.getUser(email, password).then((user) => {
+      if (user instanceof DatabaseError) {
+        return user
+      }
+
+      const pair = user.createdPair || user.joinnedToPair
+
+      if (!pair) {
+        return new DatabaseError('User does not have a pair')
+      }
+
+      return this.prisma.list.findMany({
+        where: {
+          belongsTo: pair
+        },
+        select: {
+          name: true,
+          id: true, 
+          created_at: true,
+          updated_at: true,
+          items: true,
+          belongs_to: true
+        }
+      }).then((lists) => {
+        return lists
+      })
+
+    })
+  }
+
+  // TODO deleteList()
+  // TODO deleteItem()
+  // TODO getItems()
+  // TODO updateItdb.addItemToList('teszter2@eszter.com', 'pawSword', 1, 'krumpli').then((item) => {
+  // TODO updateList() (rename)
 }
