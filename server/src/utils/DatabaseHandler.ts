@@ -290,4 +290,7 @@ export default class DatabaseHandler {
   // TODO getItems()
   // TODO updateItdb.addItemToList('teszter2@eszter.com', 'pawSword', 1, 'krumpli').then((item) => {
   // TODO updateList() (rename)
+  // TODO make tests
+  // TODO CI 
+  // TODO CD
 }
