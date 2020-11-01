@@ -22,6 +22,7 @@ A szerver websocket-en keresztül érhető el. Ehhez a socket.io könyvtárat ha
 #### Adatbázis - Prisma
 ```bash
 npx prisma migrate up --experimental
+npx prisma generate
 ```
 <!-- TODO make seeder -->
 
@@ -93,13 +94,13 @@ tree -I node_modules -L 3
 
 `dist/` a build-elt kód
 
-`prisma/` a prisma fájlkjai (séma, migrációs fájlok, uml diagramm)
+`prisma/` a prisma fájljai (séma, migrációs fájlok, uml diagramm)
 
 ## Végpont-tervek és leírások
-<!-- TODO -->
+<!-- TODO fill with content -->
 
 ## 1 db végpont működésének leírása, mi történik, milyen lépések követik egymást (szekvenciadiagram)
-<!-- TODO -->
+<!-- TODO fill with content -->
 
 ## fontosabb specifikumok bemutatása (ha van ilyen)
-<!-- TODO -->
+<!-- TODO fill with content -->
