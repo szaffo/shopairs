@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dist/server.js",
-    "build": "tsc -p src"
+    "prebuild": "npx prisma generate",
+    "build": "tsc -p src",
+    "install": "yes | npx prisma migrate up --experimental"
   },
   "repository": {
     "type": "git",
