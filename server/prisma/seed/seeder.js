@@ -27,7 +27,7 @@ const EMAIL_3 = "mpisti@mail.hu";
     },
   });
 
-  const pair = await db.pair.create({
+  await db.pair.create({
     data: {
       creator: {
         create: {
