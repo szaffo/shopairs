@@ -285,11 +285,43 @@ export default class DatabaseHandler {
     })
   }
 
-  // TODO deleteList()
-  // TODO deleteItem()
-  // TODO getItems()
+async deleteList(email: string, password: string, listId: number): Promise<List | DatabaseError> {
+  const user = await this.getUser(email, password);
+
+  if(user instanceof DatabaseError) {
+    return user;
+  }
+
+  const list = await this.prisma.list.findOne({where: {id: listId}});
+
+  if(list instanceof DatabaseError) {
+    return list;
+  }
+
+  const items = await this.prisma.item.deleteMany({where: {belongs_to: listId}});
+
+  return this.prisma.list.delete({
+    where: { id: listId }
+  }).then((list)=>{return list;})
+}
+
+async renameList(email: string, password: string, listId: number, listName: string): Promise<List | DatabaseError> {
+  const user = await this.getUser(email, password);
+  
+  if (user instanceof DatabaseError) {
+    return user
+  }
+
+  const pair = user.createdPair || user.joinnedToPair
+
+  if (!pair) {
+    return new DatabaseError('User does not have a pair')
+  }
+
+  return await this.prisma.list.update({where: {id: listId}, data: {name: listName}}).then((list)=>{return list;})
+
+}
   // TODO updateItdb.addItemToList('teszter2@eszter.com', 'pawSword', 1, 'krumpli').then((item) => {
-  // TODO updateList() (rename)
   // TODO make tests
   // TODO CI 
   // TODO CD
