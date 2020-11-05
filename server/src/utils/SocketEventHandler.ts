@@ -20,6 +20,7 @@ export default class SocketEventHandler {
       addItem: { function: this.dbh.addItemToList, dataFilter: (data) => [data.email, data.password, data.listId, data.itemName, data.quantity] },
       deleteList: { function: this.dbh.deleteList, dataFilter: (data) => [data.email, data.password, data.listId] },
       renameList: { function: this.dbh.renameList, dataFilter: (data) => [data.email, data.password, data.listId, data.listName] },
+      deleteItem: { function: this.dbh.deleteItem, dataFilter: (data) => [data.email, data.password, data.itemId] },
     }
     this.listen()
   }
@@ -115,7 +116,8 @@ type SocketInput = {
   connectionCode: string,
   listId: number
   itemName: string,
-  quantity: number
+  quantity: number,
+  itemId: number
 }
 
 type SuccessfullSocketResponse = {

@@ -323,6 +323,51 @@ export default class DatabaseHandler {
     return await this.prisma.list.update({ where: { id: listId }, data: { name: listName } }).then((list) => { return list; })
 
   }
+
+  async deleteItem(email: string, password: string, itemId: number) {
+    const user = await this.getUser(email, password);
+    
+    if (user instanceof DatabaseError) {
+      return user
+    }
+
+    const pair = user.createdPair || user.joinnedToPair
+
+    if (!pair) {
+      return new DatabaseError('User does not have a pair')
+    }
+
+    const item = await this.prisma.item.findOne({
+      where: { id: itemId},
+      select: {
+        belongsTo: {
+          select: {
+            belongsTo: {
+              select: {
+                id: true,
+                creator: true,
+                joinner: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!item) {
+      return new DatabaseError('Item not found')
+    }
+
+    if (item.belongsTo.belongsTo.id === pair.id) {
+      return this.prisma.item.delete({
+        where: { id: itemId}
+      })
+    } else {
+      return new DatabaseError('Forbidden')
+    }
+  }
+
+
   // TODO make tests
   // TODO CI 
   // TODO CD
