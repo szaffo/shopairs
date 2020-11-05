@@ -47,7 +47,7 @@ export default class SocketEventHandler {
           mappedFunction: record.function,
           dataFilter: record.dataFilter,
           socket: socket,
-          data: JSON.parse(data) // TODO safeParse
+          data: this.safeParse(data)
         }
 
         this.process(request)
@@ -56,10 +56,21 @@ export default class SocketEventHandler {
   }
 
   /**
+   * Parse suspicious inputs safely
+   */
+  private safeParse(rawData: string) {
+    try {
+      return JSON.parse(rawData)
+    } catch (error) {
+      return {}
+    }
+  }
+
+  /**
    * Process the request
    */
   private async process(request: SocketRequest) {
-    request.mappedFunction = request.mappedFunction.bind(this.dbh)
+    request.mappedFunction = (Object.keys(request.data).length > 0) ? request.mappedFunction.bind(this.dbh) : () => new DatabaseError("No or badly formatted data")
     console.log('Data from socket:', request.data)
     const result = await this.serve(request)
     console.log('Result after handler:', result) // TODO add to logger
@@ -70,6 +81,7 @@ export default class SocketEventHandler {
    */
   private async serve(request: SocketRequest) {
     request.socket.emit(request.event, await this.response(request.mappedFunction, request.dataFilter(request.data)))
+    // TODO after serve, sync the other user of the pair, if connected (butler?)
   }
 
   /**
