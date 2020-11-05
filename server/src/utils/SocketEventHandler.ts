@@ -10,16 +10,16 @@ export default class SocketEventHandler {
     this.dbh = databaseHandler
     // This table shows which function janldes which event. The dataFilter is a function that filters the args for the handler
     this.handleMap = {
-      createNewPair:      { function: this.dbh.createNewPair,     dataFilter: (data) => [data.email, data.password]},
-      getLists:           { function: this.dbh.getLists,          dataFilter: (data) => [data.email, data.password]},
-      login:              { function: this.dbh.getUser,           dataFilter: (data) => [data.email, data.password]},
-      register:           { function: this.dbh.registerUser,      dataFilter: (data) => [data.email, data.password, data.name]},
-      joinToPair:         { function: this.dbh.joinToPair,        dataFilter: (data) => [data.email, data.password, data.connectionCode]},
-      deletePair:         { function: this.dbh.deletePair,        dataFilter: (data) => [data.email, data.password]},
-      createList:         { function: this.dbh.createList,        dataFilter: (data) => [data.email, data.password, data.name]},
-      addItem:            { function: this.dbh.addItemToList,     dataFilter: (data) => [data.email, data.password, data.listId, data.itemName, data.quantity]},
-      deleteList:         { function: this.dbh.deleteList,        dataFilter: (data) => [data.email, data.password, data.listId]},
-      renameList:         { function: this.dbh.renameList,        dataFilter: (data) => [data.email, data.password, data.listId, data.listName]},
+      createNewPair: { function: this.dbh.createNewPair, dataFilter: (data) => [data.email, data.password] },
+      getLists: { function: this.dbh.getLists, dataFilter: (data) => [data.email, data.password] },
+      login: { function: this.dbh.getUser, dataFilter: (data) => [data.email, data.password] },
+      register: { function: this.dbh.registerUser, dataFilter: (data) => [data.email, data.password, data.name] },
+      joinToPair: { function: this.dbh.joinToPair, dataFilter: (data) => [data.email, data.password, data.connectionCode] },
+      deletePair: { function: this.dbh.deletePair, dataFilter: (data) => [data.email, data.password] },
+      createList: { function: this.dbh.createList, dataFilter: (data) => [data.email, data.password, data.name] },
+      addItem: { function: this.dbh.addItemToList, dataFilter: (data) => [data.email, data.password, data.listId, data.itemName, data.quantity] },
+      deleteList: { function: this.dbh.deleteList, dataFilter: (data) => [data.email, data.password, data.listId] },
+      renameList: { function: this.dbh.renameList, dataFilter: (data) => [data.email, data.password, data.listId, data.listName] },
     }
     this.listen()
   }
@@ -39,7 +39,7 @@ export default class SocketEventHandler {
   private registerHandlers(socket: SocketIO.Socket) {
     for (let event in this.handleMap) {
       const record: HandleMapRecord = this.handleMap[event]
-      socket.on(event, (data: string) => { 
+      socket.on(event, (data: string) => {
         const request: SocketRequest = {
           rawData: data,
           event: event,
@@ -92,12 +92,12 @@ export default class SocketEventHandler {
       return {
         success: false,
         error: (result instanceof DatabaseError) ? result.definition() : result.message,
-        origin: (result instanceof DatabaseError)? 'DatabaseHandler' : 'EventHandler'
+        origin: (result instanceof DatabaseError) ? 'DatabaseHandler' : 'EventHandler'
       }
     } else {
       return {
         success: true,
-        data: result 
+        data: result
       }
     }
   }
