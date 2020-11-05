@@ -10,11 +10,11 @@ class Server {
   private server: http.Server;
   private port: number;
 
-  constructor(port: number) {
+  constructor(port: number, databaseHandler: DatabaseHandler) {
     this.port = port;
     this.server = new http.Server();
 
-    new SocketEventHandler(socketIO(this.server));
+    new SocketEventHandler(socketIO(this.server), databaseHandler);
   }
 
   public start() {
@@ -24,5 +24,7 @@ class Server {
   }
 }
 
-new Server(port).start();
-const db = new DatabaseHandler()
+new Server(port, new DatabaseHandler()).start();
+// const db = new DatabaseHandler()
+// db.registerUser('test@teszter.hu', 'admin', 'TEszt BÉla').then((some) => console.log(some))
+// db.authenticateUser('test@teszter.hu', 'admin').then((some) => console.log(some))
