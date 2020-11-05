@@ -249,7 +249,7 @@ export default class DatabaseHandler {
             }
           }
         }).then((item) => {
-          return item || new DatabaseError('') // TODO add description
+          return item || new DatabaseError('Can not add item')
         })
       })
 
