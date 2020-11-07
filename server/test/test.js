@@ -3,9 +3,12 @@ let dbh = new DatabaseHandler.default();
 
 describe("Server", function () {
   describe("DatabaseHandler", function () {
+    after(function () {
+      dbh.disconnect();
+    });
+
     describe("#getUser()", function (done) {
       it("should give back an user", (done) => {
-        let dbh = new DatabaseHandler.default();
         dbh
           .getUser("t@eszter.hu", "admin")
           .then((user) => {
