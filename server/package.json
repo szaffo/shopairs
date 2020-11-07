@@ -4,7 +4,7 @@
   "description": "Shopairs Server for the socket based application Shopairs.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx mocha test/test.js",
     "start": "node dist/server.js",
     "prebuild": "npx prisma generate",
     "build": "tsc -p src",
@@ -41,6 +41,7 @@
     "@types/socket.io": "^2.1.11",
     "bcrypt": "^5.0.0",
     "express": "^4.17.1",
+    "mocha": "^8.2.1",
     "socket.io": "^2.3.0"
   }
 }
