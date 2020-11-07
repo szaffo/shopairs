@@ -242,61 +242,47 @@ export default class DatabaseHandler {
 
   }
 
-  async addItemToList(
-    email: string,
-    password: string,
-    listId: number,
-    itemName: string,
-    quantity?: number
-  ): Promise<Item | DatabaseError> {
+  async addItemToList(email: string, password: string, listId: number, itemName: string, quantity?: number): Promise<Item | DatabaseError> {
     return await this.getUser(email, password).then((user) => {
       if (user instanceof DatabaseError) {
-        return user;
+        return user
       }
 
-      const pair = user.createdPair || user.joinnedToPair;
+      const pair = user.createdPair || user.joinnedToPair
 
       if (!pair) {
-        return new DatabaseError("User does not have a pair");
+        return new DatabaseError('User does not have a pair')
       }
 
-      return this.prisma.list
-        .findOne({
-          where: {
-            id: listId,
-          },
-        })
-        .then((list) => {
-          if (!list) {
-            return new DatabaseError("List not found");
-          }
+      return this.prisma.list.findOne({
+        where: {
+          id: listId
+        }
+      }).then((list) => {
+        if (!list) {
+          return new DatabaseError("List not found")
+        }
 
-          if (list.belongs_to !== pair.id) {
-            return new DatabaseError("List does not belongs to the pair");
+        if (list.belongs_to !== pair.id) {
+          return new DatabaseError('List does not belongs to the pair')
+        }
+
+        return this.prisma.item.create({
+          data: {
+            name: itemName,
+            quantity,
+            belongsTo: {
+              connect: {
+                id: list.id
+              }
+            }
           }
         }).then((item) => {
           return item || new DatabaseError('Can not add item')
         })
       })
 
-
-          return this.prisma.item
-            .create({
-              data: {
-                name: itemName,
-                quantity,
-                belongsTo: {
-                  connect: {
-                    id: list.id,
-                  },
-                },
-              },
-            })
-            .then((item) => {
-              return item || new DatabaseError(""); // TODO add description
-            });
-        });
-    });
+    })
   }
 
   async getLists(
@@ -361,21 +347,6 @@ export default class DatabaseHandler {
       .then((list) => {
         return list;
       });
-  }
-
-  
-
-    const list = await this.prisma.list.findOne({ where: { id: listId } });
-
-    if (list instanceof DatabaseError) {
-      return list;
-    }
-
-    const items = await this.prisma.item.deleteMany({ where: { belongs_to: listId } });
-
-    return this.prisma.list.delete({
-      where: { id: listId }
-    }).then((list) => { return list; })
   }
 
   async renameList(email: string, password: string, listId: number, listName: string): Promise<List | DatabaseError> {
