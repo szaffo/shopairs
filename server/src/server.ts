@@ -4,7 +4,7 @@ import SocketEventHandler from "./utils/SocketEventHandler";
 import DatabaseHandler, { DatabaseError } from "./utils/DatabaseHandler";
 import { exit } from "process";
 
-const port: number = 3000;
+const port: number = parseInt(process.env.PORT || '5000');
 
 class Server {
   private server: http.Server;
