@@ -5,9 +5,13 @@ import { generator } from "./codeGenerator";
 // TODO Create constants for error messages
 
 export class DatabaseError extends Error {
-  constructor(message?: string) {
+  constructor(message: string) {
     super(message);
     this.name = "DatabaseError";
+  }
+
+  definition(): DatabaseErrorMessage {
+    return this.message
   }
 }
 
@@ -16,6 +20,12 @@ export default class DatabaseHandler {
 
   constructor() {
     this.prisma = new PrismaClient();
+    this.prisma.$use(async (params, next) => {
+      console.log(`Prisma.${params.model}.${params.action}(${JSON.stringify(params.args)})`) // TODO add to logger
+      return next(params)
+      // In memory of 4 hours bug searching:
+      // I forgot to put return in before next(params)
+    })
   }
 
   async registerUser(
@@ -24,16 +34,20 @@ export default class DatabaseHandler {
     name?: string
   ): Promise<User | DatabaseError> {
     return await this.authenticateUser(email, password).then((succes) => {
-      if (typeof succes === typeof DatabaseError) {
+      if (succes instanceof DatabaseError) {
         return hashPassword(password).then((hash) => {
           return this.prisma.user.create({
             data: { email, password: hash, name },
-          });
-        });
+          }).then((user) => {
+            user.password = "HIDDEN"
+            return user
+          })
+        })
+
       } else {
         return new DatabaseError("User already exists");
       }
-    });
+    })
   }
 
   async createNewPair(
@@ -48,22 +62,24 @@ export default class DatabaseHandler {
           return new DatabaseError("The user already has a pair");
         }
 
-        return this.prisma.pair
-          .create({
-            data: {
-              creator: {
-                connect: { id: user.id },
-              },
-              // ! This code should be deleted when other user is joinning to the pair
-              // ! to avoid unique constraint fail
-              connection_code: generator(),
+
+        return this.prisma.pair.create({
+          data: {
+            creator: {
+              connect: { id: user.id }
             },
-          })
-          .then((pair) => {
-            return pair;
-          });
+            // ! This code should be deleted when other user is joinning to the pair
+            // ! to avoid unique constraint fail
+            connection_code: generator(),
+          },
+        }).then((pair) => {
+          return pair
+        })
+
       }
-    });
+
+    })
+
   }
 
   /**
@@ -71,25 +87,21 @@ export default class DatabaseHandler {
    * Use the getUser() method instead. That also gives back the user, and
    * authenticates too!
    */
-  async authenticateUser(
-    email: string,
-    password: string
-  ): Promise<Boolean | DatabaseError> {
-    return await this.prisma.user
-      .findOne({
-        where: { email }, // Email has a unique constraint
-        select: { password: true },
-      })
-      .then((user) => {
-        if (!user) return new DatabaseError("User does not exits");
-        // ! DO NOT tell the client the email is not exists.
-        // ! Just send back "Email or password is incorrect"
-        // ! They don't have to know everything. It's more secure this way.
 
-        return comparePassword(password, user.password).then((success) => {
-          return success;
-        });
-      });
+  async authenticateUser(email: string, password: string): Promise<Boolean | DatabaseError> {
+    return await this.prisma.user.findFirst({
+      where: { email }, // Email has a unique constraint
+      select: { password: true }
+    }).then((user) => {
+      if (!(user instanceof Object)) return new DatabaseError("User not found in the database");
+      // ! DO NOT tell the client the email is not exists.
+      // ! Just send back "Email or password is incorrect"
+      // ! They don't have to know everything. It's more secure this way.
+
+      return comparePassword(password, user.password).then((success) => {
+        return success
+      })
+    })
   }
 
   /**
@@ -97,29 +109,17 @@ export default class DatabaseHandler {
    * * user. It also authenticates the user, checks for existance,
    * * and the returned user object won't include the password field
    */
-  async getUser(
-    email: string,
-    password: string
-  ): Promise<
-    | {
-        createdPair: Pair | null;
-        joinnedToPair: Pair | null;
-        id: number;
-        email: string;
-        password: string;
-        name: string | null;
-        updated_at: Date;
-        created_at: Date;
-      }
-    | DatabaseError
-  > {
+
+  async getUser(email: string, password: string): Promise<UserData | DatabaseError> {
     return await this.authenticateUser(email, password).then((succes) => {
+
       // ! DO NOT tell the client the email is not exists.
       // ! Just send back "Email or password is incorrect"
       // ! They don't have to know everything. It's more secure this way.
 
-      if (typeof succes === typeof DatabaseError) {
-        return new DatabaseError("Email or password is not correct");
+
+      if (succes instanceof DatabaseError) {
+        return new DatabaseError('Email or password is not correct')
       }
 
       if (!succes) {
@@ -213,37 +213,33 @@ export default class DatabaseHandler {
     });
   }
 
-  async createList(
-    email: string,
-    password: string,
-    name: string
-  ): Promise<List | DatabaseError> {
+
+  async createList(email: string, password: string, name: string): Promise<List | DatabaseError> {
     return await this.getUser(email, password).then((user) => {
       if (user instanceof DatabaseError) {
-        return user;
+        return user
       }
 
-      const pair = user.createdPair || user.joinnedToPair;
+      const pair = user.createdPair || user.joinnedToPair
 
       if (!pair) {
-        return new DatabaseError("User does not have a pair");
+        return new DatabaseError('User does not have a pair')
       }
 
-      return this.prisma.list
-        .create({
-          data: {
-            name,
-            belongsTo: {
-              connect: {
-                id: pair.id,
-              },
-            },
-          },
-        })
-        .then((list) => {
-          return list;
-        });
-    });
+      return this.prisma.list.create({
+        data: {
+          name,
+          belongsTo: {
+            connect: {
+              id: pair.id
+            }
+          }
+        }
+      }).then((list) => {
+        return list
+      })
+    })
+
   }
 
   async addItemToList(
@@ -278,6 +274,11 @@ export default class DatabaseHandler {
           if (list.belongs_to !== pair.id) {
             return new DatabaseError("List does not belongs to the pair");
           }
+        }).then((item) => {
+          return item || new DatabaseError('Can not add item')
+        })
+      })
+
 
           return this.prisma.item
             .create({
@@ -313,36 +314,35 @@ export default class DatabaseHandler {
         return new DatabaseError("User does not have a pair");
       }
 
-      return this.prisma.list
-        .findMany({
-          where: {
-            belongsTo: pair,
-          },
-          select: {
-            name: true,
-            id: true,
-            created_at: true,
-            updated_at: true,
-            items: true,
-            belongs_to: true,
-          },
-        })
-        .then((lists) => {
-          return lists;
-        });
-    });
+
+      return this.prisma.list.findMany({
+        where: {
+          belongsTo: pair
+        },
+        select: {
+          name: true,
+          id: true,
+          created_at: true,
+          updated_at: true,
+          items: true,
+          belongs_to: true
+        }
+      }).then((lists) => {
+        return lists
+      })
+
+    })
   }
 
-  async deleteList(
-    email: string,
-    password: string,
-    listId: number
-  ): Promise<List | DatabaseError> {
+  async deleteList(email: string, password: string, listId: number): Promise<List | DatabaseError> {
+
     const user = await this.getUser(email, password);
 
     if (user instanceof DatabaseError) {
       return user;
     }
+
+
 
     const list = await this.prisma.list.findOne({ where: { id: listId } });
 
@@ -363,35 +363,103 @@ export default class DatabaseHandler {
       });
   }
 
-  async renameList(
-    email: string,
-    password: string,
-    listId: number,
-    listName: string
-  ): Promise<List | DatabaseError> {
+  
+
+    const list = await this.prisma.list.findOne({ where: { id: listId } });
+
+    if (list instanceof DatabaseError) {
+      return list;
+    }
+
+    const items = await this.prisma.item.deleteMany({ where: { belongs_to: listId } });
+
+    return this.prisma.list.delete({
+      where: { id: listId }
+    }).then((list) => { return list; })
+  }
+
+  async renameList(email: string, password: string, listId: number, listName: string): Promise<List | DatabaseError> {
     const user = await this.getUser(email, password);
 
     if (user instanceof DatabaseError) {
-      return user;
+      return user
     }
 
-    const pair = user.createdPair || user.joinnedToPair;
+    const pair = user.createdPair || user.joinnedToPair
 
     if (!pair) {
-      return new DatabaseError("User does not have a pair");
+      return new DatabaseError('User does not have a pair')
     }
 
-    return await this.prisma.list
-      .update({ where: { id: listId }, data: { name: listName } })
-      .then((list) => {
-        return list;
-      });
+    return await this.prisma.list.update({ where: { id: listId }, data: { name: listName } }).then((list) => { return list; })
+
+  }
+
+  async deleteItem(email: string, password: string, itemId: number) {
+    const user = await this.getUser(email, password);
+    
+    if (user instanceof DatabaseError) {
+      return user
+    }
+
+    const pair = user.createdPair || user.joinnedToPair
+
+    if (!pair) {
+      return new DatabaseError('User does not have a pair')
+    }
+
+    const item = await this.prisma.item.findOne({
+      where: { id: itemId},
+      select: {
+        belongsTo: {
+          select: {
+            belongsTo: {
+              select: {
+                id: true,
+                creator: true,
+                joinner: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!item) {
+      return new DatabaseError('Item not found')
+    }
+
+    if (item.belongsTo.belongsTo.id === pair.id) {
+      return this.prisma.item.delete({
+        where: { id: itemId}
+      })
+    } else {
+      return new DatabaseError('Forbidden')
+    }
   }
 
   disconnect(): void {
     this.prisma.$disconnect();
   }
-  // TODO updateItdb.addItemToList('teszter2@eszter.com', 'pawSword', 1, 'krumpli').then((item) => {
-  // TODO CI
+
+
+  // TODO make tests
+  // TODO CI 
   // TODO CD
+}
+
+/* -------------------------------------------------------------------------- */
+/*                               Type definitios                              */
+/* -------------------------------------------------------------------------- */
+export type DatabaseErrorMessage = string
+
+export type UserData = {
+  createdPair: Pair | null;
+  joinnedToPair: Pair | null;
+  id: number;
+  email: string;
+  password: string;
+  name: string | null;
+  updated_at: Date;
+  created_at: Date;
 }
