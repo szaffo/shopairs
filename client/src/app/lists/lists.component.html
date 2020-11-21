@@ -1,0 +1,49 @@
+<mat-accordion multi>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        For birthday party
+      </mat-panel-title>
+      <mat-panel-description>
+        5/23 item
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <p>This is the primary content of the panel.</p>
+  </mat-expansion-panel>
+  
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        LIDL big inbuying
+      </mat-panel-title>
+      <mat-panel-description>
+        aka. what should I buy for Christmas?
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <p>flour</p>
+    <p>tea spoon</p>
+    <p>essential oil</p>
+    <p>milk</p>
+    <p>Christmas calendar</p>
+    <p>Axe desodorant</p>
+    <p>Shampoo</p>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel (opened)="panelOpenState = true"
+                       (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Self aware panel
+      </mat-panel-title>
+      <mat-panel-description>
+        Currently I am {{panelOpenState ? 'open' : 'closed'}}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <p>I'm visible because I am open</p>
+  </mat-expansion-panel>
+
+</mat-accordion>
+
+<!-- <div fxLayout="row" fxLayoutAlign="space-between">
+</div> -->

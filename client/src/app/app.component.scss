@@ -1,0 +1,27 @@
+@import "../assets/styles/variables";
+
+.mat-toolbar {
+	background-color: $mi-cp !important;
+	color: $mi-bg1 !important;
+}
+.mat-drawer-container {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	top: 64px !important;
+	background-color: $mi-bg1;
+	color: $mi-font2;
+	main {
+		margin: 0 30px;
+		padding: 0;
+	}
+	.mat-drawer {
+		width: 260px;
+        // background-color: $mi-cs-dark !important;
+        background-color: darken(white, 70) !important;
+	}
+	.mat-drawer-side {
+		border-right: 0 !important;
+	}
+}

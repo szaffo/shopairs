@@ -1,0 +1,28 @@
+@import "../../assets/styles/variables";
+
+.mat-form-field + .mat-form-field {
+  margin-left: 8px;
+}
+
+.mat-expansion-panel {
+    background-color: $mi-bg1;
+    color: black !important; 
+    max-width: 900px;
+
+}
+
+.mat-expansion-panel-header-title {
+    color: black !important; 
+    font-weight: 500;
+    font-size: 1.1em !important;
+
+}
+
+.mat-expansion-panel-header-description {
+  color: grey !important; 
+  text-align: left !important;
+}
+
+.mat-expansion-indicator::after {
+    color: grey !important;
+}
