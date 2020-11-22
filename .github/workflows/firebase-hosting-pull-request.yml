@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        working-directory: client
       - run: npm i && npm build
       - uses: FirebaseExtended/action-hosting-deploy@v0
+        working-directory: client
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SHOPAIRS }}'
