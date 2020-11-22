@@ -6,12 +6,14 @@ name: Deploy to Firebase Hosting on merge
   push:
     branches:
       - production
+    paths:
+      - "client/**"
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: cd client/
+        working-directory: client
       - run: npm i && npm build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
