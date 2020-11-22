@@ -1,14 +1,14 @@
-# Description
+## Description
 
 There are a lot of shopping list apps in the market, but none of them were made for couples. Some of them has sharing features, but after you create a new list, you have to share with your choosen one.In our app, when you create a list, it's shared with your partner immediately. Both of you can edit the shopping list,see the results in the same time.
 
-# Frontend
+## Frontend
 
 The web app link: https://shopairs.web.app/
 
 To see the documentation, go to [/client](/client)
 
-# Server
+## Server
 
 The socket server is running on Heroku!
 
