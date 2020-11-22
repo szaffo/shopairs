@@ -26,6 +26,7 @@ import { MenuComponent } from './menu/menu.component';
 import { ListsComponent } from './lists/lists.component';
 import { NewButtonComponent, CreateListDialog } from './new-button/new-button.component';
 import { SettingsComponent } from './settings/settings.component';
+import { PairComponent } from './pair/pair.component';
 // import { MatDialogModule } from '@angular/material/dialog';
 // import { SettingsComponent } from './settings/settings.component';
 // import { ProfileComponent } from './profile/profile.component';
@@ -42,7 +43,8 @@ import { SettingsComponent } from './settings/settings.component';
 		ListsComponent,
 		NewButtonComponent,
 		CreateListDialog,
-		SettingsComponent
+		SettingsComponent,
+		PairComponent
 				//IssueDialogComponent
 	],
 	imports: [
