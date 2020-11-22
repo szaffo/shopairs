@@ -6,13 +6,13 @@ There are a lot of shopping list apps in the market, but none of them were made 
 
 The web app link: https://shopairs.web.app/
 
-To see the documentation, go to [/client](/client)
+To see the documentation, go to [/client](./client)
 
 ## Server
 
 The socket server is running on Heroku!
 
-To see the documentation, go to [/server](/server)
+To see the documentation, go to [/server](./server)
 
 ## Funkcionális követelmények
 
