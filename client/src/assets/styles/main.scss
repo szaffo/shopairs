@@ -3,16 +3,16 @@
 
 @include mat-core();
 
-$myissue-primary: mat-palette($mi-cp);
-$myissue-accent: mat-palette($mi-cs);
-$myissue-warn: mat-palette($mat-red);
+$shopairs-primary: mat-palette($mat-light-green, 500);
+$shopairs-accent: mat-palette($mat-amber);
+$shopairs-warn: mat-palette($mat-red);
 
-$myissue-theme: mat-light-theme((
+$shopairs-theme: mat-light-theme((
 	color: (
-		primary: $myissue-primary,
-		accent: $myissue-accent,
-		warn: $myissue-warn,
+		primary: $shopairs-primary,
+		accent: $shopairs-accent,
+		warn: $shopairs-warn,
 		)
 ));
 
-@include angular-material-theme($myissue-theme);
+@include angular-material-theme($shopairs-theme);
