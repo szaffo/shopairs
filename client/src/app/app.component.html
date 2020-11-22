@@ -1,0 +1,20 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <button class="menu primary" mat-icon-button (click)="drawer.toggle()" matTooltip="Főmenü">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span style="margin: 0 0 0 15px;">Shopairs</span>
+  </mat-toolbar-row>
+</mat-toolbar>
+<mat-drawer-container fullscreen>
+  <mat-drawer #drawer mode="side" opened>
+    <app-menu></app-menu>
+  </mat-drawer>
+  <mat-drawer-content>
+    <main>
+      <div class='aligner' fxLayout="column" fxLayoutAlign="stretch center">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </mat-drawer-content>
+</mat-drawer-container>

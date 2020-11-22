@@ -1,0 +1,18 @@
+@import '~@angular/material/theming';
+@import "./variables.scss";
+
+@include mat-core();
+
+$shopairs-primary: mat-palette($mat-light-green, 500);
+$shopairs-accent: mat-palette($mat-amber, 300);
+$shopairs-warn: mat-palette($mat-red);
+
+$shopairs-theme: mat-light-theme((
+	color: (
+		primary: $shopairs-primary,
+		accent: $shopairs-accent,
+		warn: $shopairs-warn,
+		)
+));
+
+@include angular-material-theme($shopairs-theme);

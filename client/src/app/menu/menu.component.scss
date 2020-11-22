@@ -1,0 +1,25 @@
+
+@import "../../assets/styles/variables";
+
+.mat-list {
+	padding-top: 0;
+	.mat-list-item {
+		color: $mi-font3 !important;
+		position: relative;
+		cursor: pointer;
+		outline: none;
+		z-index: 1;
+		-webkit-transition: background-color .5s ease;
+		-moz-transition: background-color .5s ease;
+		-o-transition: background-color .5s ease;
+		-ms-transition: background-color .5s ease;
+		transition: background-color .5s ease;
+		// &:hover,
+		// &:focus {
+		// 	background-color: $bb-bg3-light;
+		// }
+		// &.active {
+		// 	background-color: $bb-secondary;
+		// }
+	}
+}

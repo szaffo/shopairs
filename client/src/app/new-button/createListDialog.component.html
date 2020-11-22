@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Create new shopping list</h2>
+<mat-dialog-content class="mat-typography">
+
+  <mat-form-field style="width: 30vw;" appearance="outline">
+    <mat-label>Name</mat-label>
+    <input matInput placeholder="e.g. To dinner">
+    <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
+    <!-- <mat-hint>Hint</mat-hint> -->
+  </mat-form-field>
+ 
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button color="accent" mat-raised-button [mat-dialog-close]="true" cdkFocusInitial>Create</button>
+</mat-dialog-actions>

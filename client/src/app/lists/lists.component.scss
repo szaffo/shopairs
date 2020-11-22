@@ -1,0 +1,28 @@
+@import "../../assets/styles/variables";
+
+.mat-expansion-panel {
+  $width: 40%; // width of list title
+  width: 60vw;
+
+  .mat-expansion-panel-header {
+    .mat-expansion-panel-header-title {
+      font-weight: 500;
+      font-size: 1.1em !important;
+      width: $width !important;
+    }
+
+    .mat-expansion-panel-header-description {
+      color: grey !important;
+      text-align: left !important;
+      width: calc(100% - #{$width}) !important;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+  }
+}
+  
+  
+.mat-expansion-indicator::after {
+  color: grey !important;
+}
