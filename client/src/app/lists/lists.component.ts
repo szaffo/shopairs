@@ -7,5 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ListsComponent {
   constructor() {}
-  panelOpenState = false;
+  openA = false;
+  openB = false;
+  openC = false;
 }
