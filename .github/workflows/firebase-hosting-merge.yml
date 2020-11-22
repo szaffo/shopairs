@@ -8,11 +8,16 @@ name: Deploy to Firebase Hosting on merge
       - production
     paths:
       - "client/**"
+
+defaults:
+  run:
+    shell: bash
+    working-directory: client/
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-    env:
-      working-directory: client
+
     steps:
       - uses: actions/checkout@v2
       - run: npm i && npm build
