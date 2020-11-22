@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-/* import { LoginComponent } from './login/login.component';
-import { IssuesComponent } from './issues/issues.component'; */
+
+import { SettingsComponent } from './settings/settings.component';
 import { ListsComponent } from './lists/lists.component'
 
 const routes: Routes = [
-	{ path: '', redirectTo: 'home', pathMatch: 'full' },
-	{ path: 'home', component: ListsComponent}
-	// { path: 'login', component: LoginComponent },
+	{ path: '', redirectTo: 'lists', pathMatch: 'full' },
+	{ path: 'lists', component: ListsComponent},
+	{ path: 'settings', component: SettingsComponent },
 	// { path: 'issues/open', component: IssuesComponent },
 	// { path: 'issues/closed', component: IssuesComponent },
 	// { path: '**', redirectTo: 'issues/open', pathMatch: 'full' }
