@@ -6,11 +6,13 @@ name: Node.js CI
 on:
   push:
     branches: [ master, server ]
+    paths:
+      - "server/**"
   pull_request:
     branches: [ master ]
 
-  paths:
-    - "server/**"
+    paths:
+      - "server/**"
 
 
 
