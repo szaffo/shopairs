@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+// import { NewButtonComponent } from '../new-button/new-button.component';
 
 @Component({
   selector: 'app-lists',
@@ -10,4 +11,5 @@ export class ListsComponent {
   openA = false;
   openB = false;
   openC = false;
+
 }

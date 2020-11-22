@@ -13,18 +13,18 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatRippleModule } from '@angular/material/core';
 import { MatExpansionModule, MatAccordion } from '@angular/material/expansion';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-
 import { AppRoutingModule } from './app-routing.module';
-
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
 import { ListsComponent } from './lists/lists.component';
+import { NewButtonComponent, CreateListDialog } from './new-button/new-button.component';
+// import { MatDialogModule } from '@angular/material/dialog';
 // import { SettingsComponent } from './settings/settings.component';
 // import { ProfileComponent } from './profile/profile.component';
 // import { IssuesComponent } from './issues/issues.component';
@@ -38,6 +38,8 @@ import { ListsComponent } from './lists/lists.component';
 		AppComponent,
 		MenuComponent,
 		ListsComponent,
+		NewButtonComponent,
+		CreateListDialog
 				//IssueDialogComponent
 	],
 	imports: [
