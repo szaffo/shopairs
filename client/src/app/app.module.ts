@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -65,7 +66,8 @@ import { SettingsComponent } from './settings/settings.component';
 		MatRippleModule,
 		MatExpansionModule,
 		MatSnackBarModule,
-		AppRoutingModule
+		AppRoutingModule,
+		MatCheckboxModule
 	],
 	providers: [],
 	bootstrap: [AppComponent]
