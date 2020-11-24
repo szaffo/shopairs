@@ -1,6 +1,8 @@
 <mat-accordion multi>
 
-  <mat-expansion-panel (opened)="openA = true" (closed)="openA = false">
+  <app-list *ngFor="let list of lists" [data]="list"></app-list>
+
+  <!-- <mat-expansion-panel (opened)="openA = true" (closed)="openA = false">
     <mat-expansion-panel-header>
       <mat-panel-title>
         For birthday party
@@ -127,7 +129,7 @@
     <button mat-mini-fab color="primary" aria-label="Plus button">
       <mat-icon>add</mat-icon>
     </button>
-  </mat-expansion-panel>
+  </mat-expansion-panel> -->
 
 </mat-accordion>
 <app-new-button></app-new-button>

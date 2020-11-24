@@ -12,4 +12,36 @@ export class ListsComponent {
   openB = false;
   openC = false;
 
+  lists = [
+    {
+      name: 'Tesco',
+      items: [
+        { name: 'Bread', checked: true },
+        { name: 'Milk', checked: false },
+        { name: 'Sugar', checked: true },
+        { name: 'Coffee', checked: true },
+        { name: 'Snacks', checked: false },
+        { name: 'Cola', checked: false },
+        { name: 'Water', checked: true },
+      ]
+    },
+    {
+      name: 'Lidl',
+      items: [
+        { name: 'apple', checked: false },
+        { name: 'ham', checked: false },
+        { name: 'cookies', checked: false },
+      ]
+    },
+    {
+      name: 'the birthday party',
+      items: [
+        { name: 'drinka', checked: true },
+        { name: 'cakes', checked: true },
+        { name: 'presents', checked: true },
+        { name: 'paper cups', checked: true },
+        { name: 'paper plates', checked: true },
+      ]
+    }
+  ]
 }

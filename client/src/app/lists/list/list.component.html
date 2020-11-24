@@ -1,0 +1,33 @@
+<mat-expansion-panel (opened)="open=true" (closed)="open=false">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            {{data.name}}
+        </mat-panel-title>
+        <mat-panel-description>
+            {{countChecked()}}/{{countAll()}} item
+            <div *ngIf="open; then thenBlock else elseBlock"></div>
+            <ng-template #thenBlock>
+                <span style="align-self: flex-end;">
+                    <button mat-icon-button aria-label="Delete list">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    <button mat-icon-button aria-label="Edit list">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </span>
+            </ng-template>
+            <ng-template #elseBlock>
+                <mat-icon *ngIf="!this.isDone()">timelapse</mat-icon>
+                <mat-icon *ngIf="this.isDone()">check</mat-icon>
+            </ng-template>
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+    <p>
+        <mat-checkbox labelPosition="after">
+            This is the primary panel
+        </mat-checkbox>
+    </p>
+    <button mat-mini-fab color="primary" aria-label="Plus button">
+        <mat-icon>add</mat-icon>
+    </button>
+</mat-expansion-panel>
