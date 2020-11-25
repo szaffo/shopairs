@@ -11,9 +11,9 @@
                     <button mat-icon-button aria-label="Delete list" (click)="deleteList($event)">
                         <mat-icon>delete</mat-icon>
                     </button>
-                    <button mat-icon-button aria-label="Edit list">
+                    <button mat-icon-button aria-label="Edit list" (click)="renameList($event)"> 
                         <mat-icon>edit</mat-icon>
-                    </button>
+                    </button> 
                 </ng-template>
                 <ng-template #elseBlock>
                     <mat-icon *ngIf="!this.isDone()">timelapse</mat-icon>

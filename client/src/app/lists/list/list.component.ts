@@ -1,5 +1,6 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormControl, ValidatorFn, AbstractControl } from '@angular/forms';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Input, OnInit, Output, EventEmitter, Inject } from '@angular/core';
+
 
 @Component({
   selector: 'app-list',
@@ -15,7 +16,7 @@ export class ListComponent implements OnInit {
   inputValue = ''
   inputError = false
 
-  constructor() {}
+  constructor(public dialog: MatDialog) {}
 
   ngOnInit(): void {}
 
@@ -76,5 +77,40 @@ export class ListComponent implements OnInit {
   deleteList(e: any): void {
     e.stopPropagation()
     this.delete.emit(this.data.name)
+  }
+
+  renameList(e: any): void {
+    e.stopPropagation()
+
+    const dialogRef = this.dialog.open(RenameListDialog, {data: {name: this.data.name}});
+
+    dialogRef.afterClosed().subscribe(result => {
+      const newName = result.trim()
+      if (newName.length > 0 && newName !== this.data.name) {
+        this.data.name = newName
+        this.change.emit()
+      }
+    });
+  }
+}
+@Component({
+  selector: 'renameList',
+  templateUrl: './rename-list-dialog.component.html',
+})
+export class RenameListDialog { 
+  inputValue = ''
+
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<RenameListDialog>) {
+
+  }
+
+  ngOnInit() {
+    this.inputValue = this.data.name
+  }
+
+  save() {
+    this.dialogRef.close(this.inputValue);
   }
 }

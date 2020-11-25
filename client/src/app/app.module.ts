@@ -27,7 +27,7 @@ import { ListsComponent, AskDelDialog } from './lists/lists.component';
 import { NewButtonComponent, CreateListDialog } from './new-button/new-button.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PairComponent } from './pair/pair.component';
-import { ListComponent } from './lists/list/list.component';
+import { ListComponent, RenameListDialog } from './lists/list/list.component';
 import { ItemComponent } from './lists/list/item/item.component';
 // import { MatDialogModule } from '@angular/material/dialog';
 // import { SettingsComponent } from './settings/settings.component';
@@ -43,13 +43,14 @@ import { ItemComponent } from './lists/list/item/item.component';
 		AppComponent,
 		MenuComponent,
 		ListsComponent,
+			CreateListDialog,
+			AskDelDialog,	
 			ListComponent,
+				RenameListDialog,
 				ItemComponent,
 		NewButtonComponent,
-		CreateListDialog,
 		SettingsComponent,
 		PairComponent,
-		AskDelDialog
 	],
 	imports: [
 		BrowserModule,
