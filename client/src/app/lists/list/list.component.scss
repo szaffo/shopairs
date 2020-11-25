@@ -2,7 +2,9 @@
 
 .mat-expansion-panel {
   $width: 70%; // width of list title
-  width: 60vw;
+  // width: 60vw;
+  width: 90vw;
+  max-width: 700px;
   margin: 15px;
 
   mat-panel-description { 
