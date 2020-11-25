@@ -1,20 +1,22 @@
-<mat-toolbar color="primary">
-  <mat-toolbar-row>
-    <button class="menu primary" mat-icon-button (click)="drawer.toggle()" matTooltip="Menu">
-      <mat-icon>menu</mat-icon>
-    </button>
-    <span style="margin: 0 0 0 15px;">Shopairs</span>
-  </mat-toolbar-row>
-</mat-toolbar>
-<mat-drawer-container fullscreen>
-  <mat-drawer #drawer mode="side" opened>
-    <app-menu></app-menu>
-  </mat-drawer>
-  <mat-drawer-content>
-    <main>
-      <div class='aligner' fxLayout="column" fxLayoutAlign="stretch center">
-        <router-outlet></router-outlet>
-      </div>
-    </main>
-  </mat-drawer-content>
-</mat-drawer-container>
+<div class="tb" [class.example-is-mobile]="mobileQuery.matches">
+  <mat-toolbar color="primary" class="example-toolbar">
+    <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+    <h1 class="example-app-name">Shopairs</h1>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+      <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches" fixedTopGap="56" [opened]="! mobileQuery.matches" #sidenav (click)="mobileQuery.matches ? sidenav.toggle(): sidenav.open()">
+          <mat-nav-list>
+              <app-menu></app-menu>
+          </mat-nav-list>
+      </mat-sidenav>
+
+      <mat-sidenav-content>
+        <main>
+            <div class='aligner' fxLayout="column" fxLayoutAlign="stretch center">
+                <router-outlet></router-outlet>
+            </div>
+        </main>
+      </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

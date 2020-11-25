@@ -4,7 +4,9 @@
             {{data.name}}
         </mat-panel-title>
         <mat-panel-description>
-            {{countChecked()}}/{{countAll()}} item
+            <span class="count-display">
+                {{countChecked()}}/{{countAll()}} item
+            </span>
             <div class="icon-box">
                 <div *ngIf="open; then thenBlock else elseBlock"></div>
                 <ng-template #thenBlock>

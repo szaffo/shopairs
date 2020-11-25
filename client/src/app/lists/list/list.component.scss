@@ -2,8 +2,15 @@
 
 .mat-expansion-panel {
   $width: 70%; // width of list title
-  width: 60vw;
+  // width: 60vw;
+  width: 700px;
+  max-width: 95vw;
   margin: 15px;
+
+  @media screen and (min-width: $tablet-break){    
+    // max-width: calc(100vw - 200px);
+    // color: pink;
+  }
 
   mat-panel-description { 
     flex-grow: 0 !important;
@@ -24,14 +31,6 @@
     }
     
 }
-
-
-  
-  
-// .mat-expansion-indicator::after {
-  // color: grey !important;
-  // color: $mi-cs !important;
-// }
 
 ul {
   list-style-type: none;
@@ -57,5 +56,13 @@ mat-panel-title {
   display: flex;
   justify-content: flex-end;
   flex-direction: row;
-  // background-color: orange;
 }
+
+@media screen and (max-width: $mobile-break) {
+  .count-display {
+    display: none;
+  }
+}
+//  .count-display {
+//     display: none;
+//   }
