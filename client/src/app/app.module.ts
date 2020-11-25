@@ -14,19 +14,21 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDialogModule, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatRippleModule } from '@angular/material/core';
-import { MatExpansionModule, MatAccordion } from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
-import { ListsComponent } from './lists/lists.component';
+import { ListsComponent, AskDelDialog } from './lists/lists.component';
 import { NewButtonComponent, CreateListDialog } from './new-button/new-button.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PairComponent } from './pair/pair.component';
+import { ListComponent, RenameListDialog } from './lists/list/list.component';
+import { ItemComponent } from './lists/list/item/item.component';
 // import { MatDialogModule } from '@angular/material/dialog';
 // import { SettingsComponent } from './settings/settings.component';
 // import { ProfileComponent } from './profile/profile.component';
@@ -41,11 +43,14 @@ import { PairComponent } from './pair/pair.component';
 		AppComponent,
 		MenuComponent,
 		ListsComponent,
+			CreateListDialog,
+			AskDelDialog,	
+			ListComponent,
+				RenameListDialog,
+				ItemComponent,
 		NewButtonComponent,
-		CreateListDialog,
 		SettingsComponent,
-		PairComponent
-				//IssueDialogComponent
+		PairComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -62,14 +67,14 @@ import { PairComponent } from './pair/pair.component';
 		MatButtonModule,
 		MatChipsModule,
 		MatTooltipModule,
-		MatDialogModule,
 		MatIconModule,
 		MatListModule,
 		MatRippleModule,
 		MatExpansionModule,
 		MatSnackBarModule,
 		AppRoutingModule,
-		MatCheckboxModule
+		MatCheckboxModule,
+		MatDialogModule,
 	],
 	providers: [],
 	bootstrap: [AppComponent]

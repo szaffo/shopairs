@@ -1,0 +1,61 @@
+@import "../../../assets/styles/variables";
+
+.mat-expansion-panel {
+  $width: 70%; // width of list title
+  width: 60vw;
+  margin: 15px;
+
+  mat-panel-description { 
+    flex-grow: 0 !important;
+  }
+
+  .mat-expansion-panel-header-title {
+    font-weight: 500;
+    font-size: 1.2em !important;
+    // width: $width !important;
+  }
+
+    .mat-expansion-panel-header-description {
+      color: grey !important;
+      // text-align: left !important;
+      // width: calc(100% - #{$width}) !important;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+}
+
+
+  
+  
+// .mat-expansion-indicator::after {
+  // color: grey !important;
+  // color: $mi-cs !important;
+// }
+
+ul {
+  list-style-type: none;
+  margin: 4px 0;
+  padding-left: 5px;
+}
+
+mat-panel-title {
+      align-self: center !important;
+}
+
+.addItemInput {
+  margin-top: 15px;
+
+}
+
+ mat-form-field {
+    width: 50%
+}
+
+.icon-box {
+  width: 85px;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+  // background-color: orange;
+}

@@ -1,0 +1,44 @@
+<mat-expansion-panel [expanded]="this.open" (opened)="open=true" (closed)="open=false">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            {{data.name}}
+        </mat-panel-title>
+        <mat-panel-description>
+            {{countChecked()}}/{{countAll()}} item
+            <div class="icon-box">
+                <div *ngIf="open; then thenBlock else elseBlock"></div>
+                <ng-template #thenBlock>
+                    <button mat-icon-button aria-label="Delete list" (click)="deleteList($event)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    <button mat-icon-button aria-label="Edit list" (click)="renameList($event)"> 
+                        <mat-icon>edit</mat-icon>
+                    </button> 
+                </ng-template>
+                <ng-template #elseBlock>
+                    <mat-icon *ngIf="!this.isDone()">timelapse</mat-icon>
+                    <mat-icon *ngIf="this.isDone()">check</mat-icon>
+                </ng-template>
+            </div>
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div>
+        <mat-checkbox [checked]="isDone()" [indeterminate]="someDone()" (change)="setAll($event.checked)" color="primary">
+        All done
+        </mat-checkbox>
+        <ul>
+            <li *ngFor="let item of data.items">
+                <app-item [data]="item" (delete)="this.itemDelete($event)" (change)="this.itemCheck()"></app-item>
+            </li>
+        </ul>
+        
+    </div>
+
+    <mat-form-field class="addItemInput">
+        <mat-label>Add item to your list</mat-label>
+        <input matInput type="text" [(ngModel)]="inputValue" (keydown.enter)="itemAdd()">
+        <button mat-button *ngIf="inputValue" matSuffix mat-icon-button aria-label="Add" (click)="itemAdd()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </mat-form-field>
+</mat-expansion-panel>

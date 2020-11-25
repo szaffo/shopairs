@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { EventEmitter } from '@angular/core';
+import { Component , Output } from '@angular/core';
+import { MatDialog, MatDialogRef} from '@angular/material/dialog';
+
+
 
 @Component({
   selector: 'app-new-button',
@@ -7,13 +10,16 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./new-button.component.scss']
 })
 export class NewButtonComponent {
+  inputValue = ''
+  @Output() result = new EventEmitter<string>()
+
   constructor(public dialog: MatDialog) { }
 
   openDialog() {
     const dialogRef = this.dialog.open(CreateListDialog);
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
+      this.result.emit(result)
     });
   }
 }
@@ -21,4 +27,15 @@ export class NewButtonComponent {
   selector: 'createListDialog',
   templateUrl: './createListDialog.component.html',
 })
-export class CreateListDialog { }
+export class CreateListDialog {
+  inputValue = ''
+
+  constructor(
+    private dialogRef: MatDialogRef<CreateListDialog>) {
+    
+  }
+
+  save() {
+    this.dialogRef.close(this.inputValue);
+  }
+}
