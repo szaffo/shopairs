@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDialogModule, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatRippleModule } from '@angular/material/core';
@@ -23,7 +23,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
-import { ListsComponent } from './lists/lists.component';
+import { ListsComponent, AskDelDialog } from './lists/lists.component';
 import { NewButtonComponent, CreateListDialog } from './new-button/new-button.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PairComponent } from './pair/pair.component';
@@ -48,7 +48,8 @@ import { ItemComponent } from './lists/list/item/item.component';
 		NewButtonComponent,
 		CreateListDialog,
 		SettingsComponent,
-		PairComponent
+		PairComponent,
+		AskDelDialog
 	],
 	imports: [
 		BrowserModule,
@@ -65,14 +66,14 @@ import { ItemComponent } from './lists/list/item/item.component';
 		MatButtonModule,
 		MatChipsModule,
 		MatTooltipModule,
-		MatDialogModule,
 		MatIconModule,
 		MatListModule,
 		MatRippleModule,
 		MatExpansionModule,
 		MatSnackBarModule,
 		AppRoutingModule,
-		MatCheckboxModule
+		MatCheckboxModule,
+		MatDialogModule,
 	],
 	providers: [],
 	bootstrap: [AppComponent]

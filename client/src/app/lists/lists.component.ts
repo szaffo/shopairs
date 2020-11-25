@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Component } from '@angular/core';
 // import { NewButtonComponent } from '../new-button/new-button.component';
 
 @Component({
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./lists.component.scss']
 })
 export class ListsComponent {
-  constructor() {}
+  constructor(public dialog: MatDialog) {}
 
   lists = [
     {
@@ -56,7 +57,18 @@ export class ListsComponent {
   }
 
   deleteList(name:string): void {
-    console.log('deleting')
-    this.lists = this.lists.filter((list: any) => list.name !== name)
+    const dialogRef = this.dialog.open(AskDelDialog);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.lists = this.lists.filter((list: any) => list.name !== name)
+      }
+    });
   }
 }
+
+@Component({
+  selector: 'askDelDialog',
+  templateUrl: './ask-del-dialog.component.html',
+})
+export class AskDelDialog { }
