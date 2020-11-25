@@ -3,4 +3,4 @@
   <app-list *ngFor="let list of lists" [data]="list" (change)="this.change()"></app-list>
 
 </mat-accordion>
-<app-new-button></app-new-button>
+<app-new-button (result)="createList($event)" ></app-new-button>

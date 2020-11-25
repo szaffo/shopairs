@@ -45,4 +45,13 @@ export class ListsComponent {
   change(): void {
     console.log('dataset is changed. Should save')
   }
+
+  createList(name: string): void {
+    if (name.trim().length > 0) {
+      this.lists.push({
+        name: name.trim(),
+        items: []
+      })
+    } 
+  }
 }

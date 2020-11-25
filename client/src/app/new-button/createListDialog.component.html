@@ -3,13 +3,11 @@
 
   <mat-form-field style="width: 30vw;" appearance="outline">
     <mat-label>Name</mat-label>
-    <input matInput placeholder="e.g. To dinner">
-    <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
-    <!-- <mat-hint>Hint</mat-hint> -->
+    <input matInput placeholder="e.g. To dinner" [(ngModel)]="inputValue" (keydown.enter)="save()">
   </mat-form-field>
  
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
-  <button color="accent" mat-raised-button [mat-dialog-close]="true" cdkFocusInitial>Create</button>
+  <button color="accent" mat-raised-button (click)="save()">Create</button>
 </mat-dialog-actions>
