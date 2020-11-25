@@ -1,8 +1,8 @@
 <div class="line" fxLayout="row" fxLayoutAlign="space-between center" >
-    <mat-checkbox [checked]="data.checked">
+    <mat-checkbox [checked]="data.checked" (change)="this.check()">
         {{ data.name }}
     </mat-checkbox>
-    <button mat-icon-button aria-label="Delte item from list">
+    <button mat-icon-button aria-label="Delete item from list" (click)="this._delete()">
         <mat-icon>clear</mat-icon>
     </button>
 </div>

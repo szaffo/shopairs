@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-list',
@@ -8,6 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class ListComponent implements OnInit {
 
   @Input() data: any;
+  @Output() change = new EventEmitter()
   open = false;
 
   constructor() {
@@ -27,6 +28,15 @@ export class ListComponent implements OnInit {
 
   isDone(): boolean {
     return this.countAll() === this.countChecked()
+  }
+
+  itemCheck(): void {
+    this.change.emit()
+  }
+
+  itemDelete(name: string): void {
+    this.data.items = this.data.items.filter((item: any)=> item.name !== name)
+    this.change.emit()
   }
 
 }

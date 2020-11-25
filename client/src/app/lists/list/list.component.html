@@ -25,7 +25,7 @@
     <!-- <p> -->
         <ul>
             <li *ngFor="let item of data.items">
-                <app-item [data]="item"></app-item>
+                <app-item [data]="item" (delete)="this.itemDelete($event)" (change)="this.itemCheck()"></app-item>
             </li>
         </ul>
     <!-- </p> -->

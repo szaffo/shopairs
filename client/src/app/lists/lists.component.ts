@@ -44,4 +44,8 @@ export class ListsComponent {
       ]
     }
   ]
+
+  change(): void {
+    console.log('dataset is changed. Should save')
+  }
 }
