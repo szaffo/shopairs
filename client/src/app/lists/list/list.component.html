@@ -22,12 +22,14 @@
             </ng-template>
         </mat-panel-description>
     </mat-expansion-panel-header>
-    <p>
-        <mat-checkbox labelPosition="after">
-            This is the primary panel
-        </mat-checkbox>
-    </p>
-    <button mat-mini-fab color="primary" aria-label="Plus button">
+    <!-- <p> -->
+        <ul>
+            <li *ngFor="let item of data.items">
+                <app-item [data]="item"></app-item>
+            </li>
+        </ul>
+    <!-- </p> -->
+    <!-- <button mat-mini-fab color="primary" aria-label="Plus button">
         <mat-icon>add</mat-icon>
-    </button>
+    </button> -->
 </mat-expansion-panel>

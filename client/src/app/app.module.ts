@@ -18,7 +18,7 @@ import { MatDialogModule, MatDialogContent, MatDialogActions } from '@angular/ma
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatRippleModule } from '@angular/material/core';
-import { MatExpansionModule, MatAccordion } from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -28,6 +28,7 @@ import { NewButtonComponent, CreateListDialog } from './new-button/new-button.co
 import { SettingsComponent } from './settings/settings.component';
 import { PairComponent } from './pair/pair.component';
 import { ListComponent } from './lists/list/list.component';
+import { ItemComponent } from './lists/list/item/item.component';
 // import { MatDialogModule } from '@angular/material/dialog';
 // import { SettingsComponent } from './settings/settings.component';
 // import { ProfileComponent } from './profile/profile.component';
@@ -43,10 +44,11 @@ import { ListComponent } from './lists/list/list.component';
 		MenuComponent,
 		ListsComponent,
 			ListComponent,
+				ItemComponent,
 		NewButtonComponent,
 		CreateListDialog,
 		SettingsComponent,
-		PairComponent,
+		PairComponent
 	],
 	imports: [
 		BrowserModule,
