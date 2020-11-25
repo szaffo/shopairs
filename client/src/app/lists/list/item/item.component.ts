@@ -26,4 +26,12 @@ export class ItemComponent implements OnInit {
     this.delete.emit(this.data.name)
   }
 
+  incQuantity():void {
+    this.data.quantity += 1
+  }
+
+  decQuantity():void {
+    this.data.quantity = Math.max(1, this.data.quantity - 1)
+  }
+
 }
