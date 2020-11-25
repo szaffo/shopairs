@@ -15,7 +15,7 @@
 	.mat-drawer {
 		width: 260px;
 		max-width: 100vw;
-        background-color: darken(white, 70) !important;
+		background-color: darken(white, 70) !important;
 	}
 	.mat-drawer-side {
 		border-right: 0 !important;
@@ -53,8 +53,16 @@ h1.example-app-name {
   flex: 1;
 }
 
-.example-is-mobile .example-sidenav-container {
+// .example-is-mobile .example-sidenav-container {
   /* When the sidenav is fixed, don't constrain the height of the sidenav container. This allows the
      `<body>` to be our scrolling element for mobile layouts. */
-  flex: 1 0 auto;
+//   flex: 1 0 auto;
+// }
+
+// .mat-drawer-content {
+// 	height: auto;
+// }
+
+.mat-sidenav-content {
+	overflow-x: hidden;
 }
