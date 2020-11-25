@@ -10,6 +10,7 @@ export class ListComponent implements OnInit {
 
   @Input() data: any = {}
   @Output() change = new EventEmitter()
+  @Output() delete = new EventEmitter<string>()
   open = false;
   inputValue = ''
   inputError = false
@@ -70,6 +71,10 @@ export class ListComponent implements OnInit {
     this.data.items.forEach((item: any) => {
       item.checked = to;
     });
+  }
 
+  deleteList(e: any): void {
+    e.stopPropagation()
+    this.delete.emit(this.data.name)
   }
 }

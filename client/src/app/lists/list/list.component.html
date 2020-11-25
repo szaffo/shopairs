@@ -5,21 +5,21 @@
         </mat-panel-title>
         <mat-panel-description>
             {{countChecked()}}/{{countAll()}} item
-            <div *ngIf="open; then thenBlock else elseBlock"></div>
-            <ng-template #thenBlock>
-                <span style="align-self: flex-end;">
-                    <button mat-icon-button aria-label="Delete list">
+            <div class="icon-box">
+                <div *ngIf="open; then thenBlock else elseBlock"></div>
+                <ng-template #thenBlock>
+                    <button mat-icon-button aria-label="Delete list" (click)="deleteList($event)">
                         <mat-icon>delete</mat-icon>
                     </button>
                     <button mat-icon-button aria-label="Edit list">
                         <mat-icon>edit</mat-icon>
                     </button>
-                </span>
-            </ng-template>
-            <ng-template #elseBlock>
-                <mat-icon *ngIf="!this.isDone()">timelapse</mat-icon>
-                <mat-icon *ngIf="this.isDone()">check</mat-icon>
-            </ng-template>
+                </ng-template>
+                <ng-template #elseBlock>
+                    <mat-icon *ngIf="!this.isDone()">timelapse</mat-icon>
+                    <mat-icon *ngIf="this.isDone()">check</mat-icon>
+                </ng-template>
+            </div>
         </mat-panel-description>
     </mat-expansion-panel-header>
     <div>

@@ -54,4 +54,9 @@ export class ListsComponent {
       })
     } 
   }
+
+  deleteList(name:string): void {
+    console.log('deleting')
+    this.lists = this.lists.filter((list: any) => list.name !== name)
+  }
 }

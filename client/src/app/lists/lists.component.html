@@ -1,6 +1,6 @@
 <mat-accordion>
 
-  <app-list *ngFor="let list of lists" [data]="list" (change)="this.change()"></app-list>
+  <app-list *ngFor="let list of lists" [data]="list" (change)="this.change()" (delete)="deleteList($event)"></app-list>
 
 </mat-accordion>
 <app-new-button (result)="createList($event)" ></app-new-button>
