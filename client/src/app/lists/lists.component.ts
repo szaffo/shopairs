@@ -1,5 +1,5 @@
 import { MatDialog } from '@angular/material/dialog';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 // import { NewButtonComponent } from '../new-button/new-button.component';
 
 @Component({
@@ -33,6 +33,7 @@ export class ListsComponent {
     },
     {
       name: 'the birthday party',
+      open: false,
       items: [
         { name: 'drinka', checked: true },
         { name: 'cakes', checked: true },
@@ -51,7 +52,8 @@ export class ListsComponent {
     if (name.trim().length > 0) {
       this.lists.push({
         name: name.trim(),
-        items: []
+        items: [],
+        open: true
       })
     } 
   }

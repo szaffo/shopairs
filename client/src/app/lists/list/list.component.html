@@ -1,4 +1,4 @@
-<mat-expansion-panel (opened)="open=true" (closed)="open=false">
+<mat-expansion-panel [expanded]="this.open" (opened)="open=true" (closed)="open=false">
     <mat-expansion-panel-header>
         <mat-panel-title>
             {{data.name}}

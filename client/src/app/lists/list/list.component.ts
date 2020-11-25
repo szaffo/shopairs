@@ -18,7 +18,9 @@ export class ListComponent implements OnInit {
 
   constructor(public dialog: MatDialog) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.open = this.data.open || false
+  }
 
   countChecked(): number {
     return this.data.items.filter((item: any) => item.checked).length
