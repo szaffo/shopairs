@@ -22,14 +22,23 @@
             </ng-template>
         </mat-panel-description>
     </mat-expansion-panel-header>
-    <!-- <p> -->
+    <div>
+        <mat-checkbox [checked]="isDone()" [indeterminate]="someDone()" (change)="setAll($event.checked)" color="primary">
+        All done
+        </mat-checkbox>
         <ul>
             <li *ngFor="let item of data.items">
                 <app-item [data]="item" (delete)="this.itemDelete($event)" (change)="this.itemCheck()"></app-item>
             </li>
         </ul>
-    <!-- </p> -->
-    <!-- <button mat-mini-fab color="primary" aria-label="Plus button">
-        <mat-icon>add</mat-icon>
-    </button> -->
+        
+    </div>
+
+    <mat-form-field class="addItemInput">
+        <mat-label>Add item to your list</mat-label>
+            <input matInput type="text" [(ngModel)]="inputValue" (keydown.enter)="itemAdd()">
+            <button mat-button *ngIf="inputValue" matSuffix mat-icon-button aria-label="Add" (click)="itemAdd()">
+                <mat-icon>add</mat-icon>
+            </button>
+    </mat-form-field>
 </mat-expansion-panel>

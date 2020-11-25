@@ -8,9 +8,6 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ListsComponent {
   constructor() {}
-  openA = false;
-  openB = false;
-  openC = false;
 
   lists = [
     {

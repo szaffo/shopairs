@@ -14,6 +14,7 @@ export class ItemComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.data.quantity = this.data.quantity || 1
   }
 
   check(): void {
