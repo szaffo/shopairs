@@ -1,6 +1,7 @@
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Input, OnInit, Output, EventEmitter, Inject } from '@angular/core';
-
+import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-list',
@@ -15,8 +16,10 @@ export class ListComponent implements OnInit {
   open = false;
   inputValue = ''
   inputError = false
+  isExtraSmall: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.XSmall);
 
-  constructor(public dialog: MatDialog) {}
+
+  constructor(private breakpointObserver: BreakpointObserver, public dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.open = this.data.open || false
@@ -84,9 +87,24 @@ export class ListComponent implements OnInit {
   renameList(e: any): void {
     e.stopPropagation()
 
-    const dialogRef = this.dialog.open(RenameListDialog, {data: {name: this.data.name}});
+    const dialogRef = this.dialog.open(RenameListDialog, {
+      data: {name: this.data.name},
+      width: '50%',
+      height: '50%',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+    });
+
+    const smallDialogSubscription = this.isExtraSmall.subscribe((size: any) => {
+      if (size.matches) {
+        dialogRef.updateSize('98%', 'auto');
+      } else {
+        dialogRef.updateSize('600px', 'auto');
+      }
+    });
 
     dialogRef.afterClosed().subscribe(result => {
+      smallDialogSubscription.unsubscribe();
       const newName = result.trim()
       if (newName.length > 0 && newName !== this.data.name) {
         this.data.name = newName
@@ -98,6 +116,7 @@ export class ListComponent implements OnInit {
 @Component({
   selector: 'renameList',
   templateUrl: './rename-list-dialog.component.html',
+  styleUrls: ['./list.component.scss']
 })
 export class RenameListDialog { 
   inputValue = ''
