@@ -46,11 +46,6 @@ mat-panel-title {
   margin-top: 15px;
 
 }
-
- mat-form-field {
-    width: 50%
-}
-
 .icon-box {
   width: 85px;
   display: flex;
@@ -63,6 +58,7 @@ mat-panel-title {
     display: none;
   }
 }
-//  .count-display {
-//     display: none;
-//   }
+
+mat-form-field {
+  width: 100%
+}
