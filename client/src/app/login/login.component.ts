@@ -46,4 +46,11 @@ export class LoginComponent {
     this.password = '';
   }
 
+  loginWithFacebook() {
+    this.disabled = true
+    this.authService.loginFacebook();
+    this.disabled = false
+    this.password = '';
+  }
+
 }

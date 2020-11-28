@@ -54,7 +54,15 @@ export class AuthService {
   }
 
   loginGoogle() {
-    this.firebaseAuth.signInWithRedirect(new firebase.default.auth.GoogleAuthProvider())
+    this.loginWithProvider(new firebase.default.auth.GoogleAuthProvider())
+  }
+
+  loginFacebook() {
+    this.loginWithProvider(new firebase.default.auth.FacebookAuthProvider())
+  }
+
+  loginWithProvider(provider: firebase.default.auth.AuthProvider): void {
+    this.firebaseAuth.signInWithRedirect(provider)
       .then(value => {
         this.router.navigate(['lists'])
       })
