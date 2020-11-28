@@ -1,3 +1,4 @@
+import { LoginComponent } from './login/login.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
@@ -7,13 +8,14 @@ import { ListsComponent } from './lists/lists.component'
 import { PairComponent } from './pair/pair.component'
 
 const routes: Routes = [
-	{ path: '', redirectTo: 'lists', pathMatch: 'full' },
+	{ path: '', redirectTo: '/', pathMatch: 'full' },
 	{ path: 'lists', component: ListsComponent},
 	{ path: 'settings', component: SettingsComponent },
 	{ path: 'pair', component: PairComponent },
+	{ path: 'login', component: LoginComponent },
 	// { path: 'issues/open', component: IssuesComponent },
 	// { path: 'issues/closed', component: IssuesComponent },
-	// { path: '**', redirectTo: 'issues/open', pathMatch: 'full' }
+	{ path: '**', redirectTo: '/', pathMatch: 'full' }
 ];
 
 @NgModule({
