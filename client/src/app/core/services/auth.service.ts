@@ -54,7 +54,7 @@ export class AuthService {
   }
 
   loginGoogle() {
-    this.firebaseAuth.signInWithPopup(new firebase.default.auth.GoogleAuthProvider())
+    this.firebaseAuth.signInWithRedirect(new firebase.default.auth.GoogleAuthProvider())
       .then(value => {
         this.router.navigate(['lists'])
       })
@@ -62,6 +62,18 @@ export class AuthService {
         this.ns.show('Something went wrong. We are sorry :c')
         console.log('Something went wrong:', err.message);
       });
+  }
+
+  checkRedirect(): void {
+    this.firebaseAuth.getRedirectResult().then((result: any) => {
+      if (result) {
+        this.router.navigate(['lists'])
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+      this.ns.show('Something went wrong :(')
+    })
   }
 
 }

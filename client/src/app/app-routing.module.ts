@@ -13,10 +13,11 @@ const routes: Routes = [
 	{ path: 'lists', component: ListsComponent, canActivate: [AngularFireAuthGuard]},
 	{ path: 'settings', component: SettingsComponent, canActivate: [AngularFireAuthGuard]},
 	{ path: 'pair', component: PairComponent, canActivate: [AngularFireAuthGuard] },
+	{ path: 'register', component: LoginComponent},
 	{ path: 'login', component: LoginComponent},
 	// { path: 'issues/open', component: IssuesComponent },
 	// { path: 'issues/closed', component: IssuesComponent },
-	{ path: '**', redirectTo: '/', pathMatch: 'full' }
+	{ path: '**', redirectTo: '/lists', pathMatch: 'full' }
 ];
 
 @NgModule({

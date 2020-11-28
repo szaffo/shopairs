@@ -7,7 +7,11 @@
 <div class="aligner" fxLayout="row" fxLayoutAlign="center center" >
     <mat-card>
         <mat-card-header>
-            <mat-card-title>Login to shopairs</mat-card-title>
+            <mat-card-title *ngIf="this.register">Sign up to shopairs</mat-card-title>
+            <mat-card-title *ngIf="!this.register">Sign in to shopairs</mat-card-title>
+
+            <mat-card-subtitle *ngIf="!this.register">Or sign up <a routerLink="/register" href="">here</a></mat-card-subtitle>
+            <mat-card-subtitle *ngIf="this.register">Or sign in <a routerLink="/login" href="">here</a></mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>
@@ -26,7 +30,9 @@
                     </button>
                 </mat-form-field> 
                 
-                <button [disabled]="this.disabled" mat-raised-button color="primary" (click)="login()">Login</button>
+                <button *ngIf="!this.register" [disabled]="this.disabled" mat-raised-button color="primary" (click)="login()">Sign in</button>
+                <button *ngIf="this.register" [disabled]="this.disabled" mat-raised-button color="primary" (click)="signup()">Sign up</button>
+                
                 
                 <mat-divider [inset]="true"></mat-divider>
                 
@@ -34,6 +40,7 @@
                     <button [disabled]="this.disabled" class="others" mat-raised-button color="accent" (click)="this.loginWithGoogle()">Google</button>
                     <button [disabled]="this.disabled" class="others" mat-raised-button color="accent">Facebook</button>
                 </div>
+
             </div>     
         </mat-card-content>
         

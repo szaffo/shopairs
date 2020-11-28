@@ -1,20 +1,22 @@
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from './../core/services/auth.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
   email: string = ''
   password: string = ''
   disabled = false
   hide = true
+  @Input() register = false
+  sub: any
 
-  constructor(public authService: AuthService) { }
-
-  ngOnInit(): void {
+  constructor(public authService: AuthService, private route: ActivatedRoute) {
+    this.authService.checkRedirect()
   }
 
   signup() {

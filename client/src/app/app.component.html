@@ -1,4 +1,4 @@
-<div *ngIf="router.url !== '/' && router.url !== '/404'; else nodrawer">
+<div *ngIf="router.url !== '/' && router.url !== '/404' && router.url !== '/login' && router.url !== '/register'; else nodrawer">
   <div class="tb" [class.example-is-mobile]="mobileQuery.matches">
     <mat-toolbar color="primary" class="example-toolbar">
       <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
@@ -23,5 +23,5 @@
   </div>
 </div>
 <ng-template #nodrawer>
-  <app-login></app-login>
+  <app-login [register]="router.url === '/register'"></app-login>
 </ng-template>
