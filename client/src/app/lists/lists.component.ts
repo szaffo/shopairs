@@ -1,3 +1,4 @@
+import { NotificationService } from '../core/services/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Component, Input } from '@angular/core';
 // import { NewButtonComponent } from '../new-button/new-button.component';
@@ -8,7 +9,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./lists.component.scss']
 })
 export class ListsComponent {
-  constructor(public dialog: MatDialog) {}
+  constructor(public dialog: MatDialog, private ns: NotificationService) {}
 
   lists = [
     {
@@ -64,6 +65,7 @@ export class ListsComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.lists = this.lists.filter((list: any) => list.name !== name)
+        this.ns.show('List deleted')
       }
     });
   }
