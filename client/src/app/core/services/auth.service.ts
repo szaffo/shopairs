@@ -43,8 +43,13 @@ export class AuthService {
   }
 
   logout() {
-    this.firebaseAuth.signOut();
-    this.router.navigate(['/'])
+    this.firebaseAuth.signOut()
+      .then(() => {
+        this.router.navigate(['/'])
+      })
+      .catch(() => {
+        this.ns.show('There was an error while loggig out') // TODO detailed errors
+      })
   }
 
 }

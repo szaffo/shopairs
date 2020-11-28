@@ -1,0 +1,25 @@
+.aligner {
+    // background-color: #ddd;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10
+}
+
+// .mat-toolbar {
+//     z-index: 15 !important;
+// }
+
+.mat-divider {
+    margin: 20px 0px !important;
+}
+
+.mat-card {
+    width: 400px;
+}
+
+.others {
+    margin-right: 10px;
+}

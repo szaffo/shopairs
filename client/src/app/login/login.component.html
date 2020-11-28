@@ -1,29 +1,41 @@
- <div>
-        <!-- this header tag displays only when user is logged-in -->
-        <h1 *ngIf="authService.user | async">
-	        Welcome User: {{ (authService.user | async)?.email }}!
-        </h1>
+<mat-toolbar sytle="z-index: 100" color="primary" class="example-toolbar">
+    <!-- <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button> -->
+    <h1 class="example-app-name">Shopairs</h1>
+</mat-toolbar>
 
-		<!-- this div displays only when user is not-logged-in -->
-	    <div *ngIf="!(authService.user | async)">
-            <!-- these input fields takes email and password from user -->
-            <input type="text" [(ngModel)]="email" placeholder="Enter email"/>
-            <input type="password" [(ngModel)]="password" placeholder="Enter password"/>
+    
+<div class="aligner" fxLayout="row" fxLayoutAlign="center center" >
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Login to shopairs</mat-card-title>
+        </mat-card-header>
 
-            <!-- user click this button to signup -->
-            <button (click)="signup()" [disabled]="!email || !password">
-            	Signup
-            </button>
+        <mat-card-content>
 
-            <!-- user click this button to login -->
-            <button (click)="login()" [disabled]="!email || !password">
-            	Login
-            </button>
-	    </div>
-
-        <!-- user click this button to logout -->
-        <!-- this button displays only when user is logged-in -->
-        <button (click)="logout()" *ngIf="authService.user | async">
-        	Logout
-        </button>
-    </div>
+            <div fxLayout="column" fxLayoutAlign="center stretch" >
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input [(ngModel)]="email" placeholder="Enter email" matInput>
+                </mat-form-field>  
+                
+                <mat-form-field appearance="outline">
+                    <mat-label>Password</mat-label>
+                    <input [type]="hide ? 'password' : 'text'" [(ngModel)]="password" placeholder="Enter password" matInput (keydown.enter)="login()">
+                    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                </mat-form-field> 
+                
+                <button [disabled]="this.disabled" mat-raised-button color="primary" (click)="login()">Login</button>
+                
+                <mat-divider [inset]="true"></mat-divider>
+                
+                <div fxLayout="row" fxLayoutAlign="left center" >
+                    <button [disabled]="this.disabled" class="others" mat-raised-button color="accent">Google</button>
+                    <button [disabled]="this.disabled" class="others" mat-raised-button color="accent">Facebook</button>
+                </div>
+            </div>     
+        </mat-card-content>
+        
+    </mat-card>
+</div>
