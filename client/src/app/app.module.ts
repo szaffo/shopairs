@@ -1,10 +1,18 @@
+import { AuthService } from './core/services/auth.service';
 import { NgModule } from '@angular/core';
+
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { AngularFireMessagingModule } from '@angular/fire/messaging';
+import { AngularFireStorageModule } from '@angular/fire/storage';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
+
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCardModule } from '@angular/material/card';
@@ -20,6 +28,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatRippleModule } from '@angular/material/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
@@ -30,6 +39,7 @@ import { PairComponent } from './pair/pair.component';
 import { ListComponent, RenameListDialog } from './lists/list/list.component';
 import { ItemComponent } from './lists/list/item/item.component';
 import { LoginComponent } from './login/login.component';
+import { environment } from 'src/environments/environment';
 // import { MatDialogModule } from '@angular/material/dialog';
 // import { SettingsComponent } from './settings/settings.component';
 // import { ProfileComponent } from './profile/profile.component';
@@ -56,6 +66,10 @@ import { LoginComponent } from './login/login.component';
 	],
 	imports: [
 		BrowserModule,
+		AngularFireModule.initializeApp(environment.firebase),
+		AngularFireAuthModule,
+		AngularFireMessagingModule,
+		AngularFireStorageModule,
 		BrowserAnimationsModule,
 		FormsModule,
 		ReactiveFormsModule,
@@ -78,7 +92,9 @@ import { LoginComponent } from './login/login.component';
 		MatCheckboxModule,
 		MatDialogModule,
 	],
-	providers: [],
+	providers: [
+		AuthService
+	],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }  bootstrap: [AppComponent]

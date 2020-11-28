@@ -1,3 +1,4 @@
+import { AuthService } from './../core/services/auth.service';
 import { Component } from '@angular/core';
 
 import { Observable } from 'rxjs';
@@ -9,6 +10,6 @@ import { Observable } from 'rxjs';
 })
 export class MenuComponent {
 
-	constructor() {
+	constructor(public auth: AuthService) {
 	}
 }
