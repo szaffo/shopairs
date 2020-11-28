@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
+import * as firebase from 'firebase';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +51,17 @@ export class AuthService {
       .catch(() => {
         this.ns.show('There was an error while loggig out') // TODO detailed errors
       })
+  }
+
+  loginGoogle() {
+    this.firebaseAuth.signInWithPopup(new firebase.default.auth.GoogleAuthProvider())
+      .then(value => {
+        this.router.navigate(['lists'])
+      })
+      .catch(err => {
+        this.ns.show('Something went wrong. We are sorry :c')
+        console.log('Something went wrong:', err.message);
+      });
   }
 
 }

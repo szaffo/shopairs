@@ -37,4 +37,11 @@ export class LoginComponent implements OnInit {
     this.authService.logout();
   }
 
+  loginWithGoogle() {
+    this.disabled = true
+    this.authService.loginGoogle();
+    this.disabled = false
+    this.password = '';
+  }
+
 }
