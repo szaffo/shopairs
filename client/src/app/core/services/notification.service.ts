@@ -12,7 +12,7 @@ export class NotificationService {
   public show(message: any, action: string | undefined = 'close', config?: MatSnackBarConfig | null): void {
     if (!config) {
       config = new MatSnackBarConfig();
-      config.duration = 2000;
+      config.duration = 3000;
 
     }
     this.snackBar.open(message, action, config);

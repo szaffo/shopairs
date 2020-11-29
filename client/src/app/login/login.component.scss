@@ -1,0 +1,41 @@
+@import '../../assets/styles/variables';
+.aligner {
+    // background-color: #ddd;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10
+}
+
+// .mat-toolbar {
+//     z-index: 15 !important;
+// }
+
+.mat-divider {
+    margin: 20px 0px !important;
+}
+
+.mat-card {
+    width: 400px;
+}
+
+.others {
+    margin-right: 10px;
+}
+
+.mat-card-subtitle {
+    margin-top: 5px !important;
+    font-size: 0.9em;
+}
+a {
+    color: inherit;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 150ms ease-in-out;
+
+    &:hover {
+        color: $mi-cp;
+    }
+}

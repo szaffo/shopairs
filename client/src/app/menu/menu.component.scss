@@ -23,3 +23,17 @@
 		// }
 	}
 }
+
+.avatar {
+	height: auto !important;
+	// margin: 15px 0 0 0;
+	padding: 11px 0 !important;
+	.mat-card-header {
+		padding-top: 20px !important;
+		
+		.mat-card-subtitle {
+			font-size: 0.8em;
+			color: darken($mi-font3, 50);
+		}
+	}
+}
