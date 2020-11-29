@@ -1,0 +1,48 @@
+<mat-toolbar sytle="z-index: 100" color="primary" class="example-toolbar">
+    <!-- <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button> -->
+    <h1 class="example-app-name">Shopairs</h1>
+</mat-toolbar>
+
+    
+<div class="aligner" fxLayout="row" fxLayoutAlign="center center" >
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title *ngIf="this.register">Sign up to shopairs</mat-card-title>
+            <mat-card-title *ngIf="!this.register">Sign in to shopairs</mat-card-title>
+
+            <mat-card-subtitle *ngIf="!this.register">Or sign up <a routerLink="/register" href="">here</a></mat-card-subtitle>
+            <mat-card-subtitle *ngIf="this.register">Or sign in <a routerLink="/login" href="">here</a></mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+
+            <div fxLayout="column" fxLayoutAlign="center stretch" >
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input [(ngModel)]="email" placeholder="Enter email" matInput>
+                </mat-form-field>  
+                
+                <mat-form-field appearance="outline">
+                    <mat-label>Password</mat-label>
+                    <input [type]="hide ? 'password' : 'text'" [(ngModel)]="password" placeholder="Enter password" matInput (keydown.enter)="login()">
+                    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                </mat-form-field> 
+                
+                <button *ngIf="!this.register" [disabled]="this.disabled" mat-raised-button color="primary" (click)="login()">Sign in</button>
+                <button *ngIf="this.register" [disabled]="this.disabled" mat-raised-button color="primary" (click)="signup()">Sign up</button>
+                
+                
+                <mat-divider [inset]="true"></mat-divider>
+                
+                <div fxLayout="row" fxLayoutAlign="left center" >
+                    <button [disabled]="this.disabled" class="others" mat-raised-button color="accent" (click)="this.loginWithGoogle()">Google</button>
+                    <button [disabled]="this.disabled" class="others" mat-raised-button color="accent" (click)="this.loginWithFacebook()">Facebook</button>
+                </div>
+
+            </div>     
+        </mat-card-content>
+        
+    </mat-card>
+</div>

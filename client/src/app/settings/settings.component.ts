@@ -1,3 +1,5 @@
+import { AuthService } from './../core/services/auth.service';
+import { NotificationService } from '../core/services/notification.service';
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -7,15 +9,20 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
+  token = ''
 
-  constructor(private _snackBar: MatSnackBar) { }
+  constructor(private ns: NotificationService, private auth: AuthService) {
+    this.auth.getUserToken().subscribe((_token: any) => {
+      this.token = _token
+    })
+  }
 
   ngOnInit(): void {
   }
   hide = true;
 
   openSnackBar() {
-    this._snackBar.open('Settings are saved', 'Close', {
+    this.ns.show('Settings are saved', 'Close', {
       duration: 1500,
     });
   }
