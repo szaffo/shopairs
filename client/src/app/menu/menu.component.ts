@@ -9,7 +9,5 @@ import { Observable } from 'rxjs';
 	styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent {
-
-	constructor(public auth: AuthService) {
-	}
+	constructor(public auth: AuthService) {}
 }

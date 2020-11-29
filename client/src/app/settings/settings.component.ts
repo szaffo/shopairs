@@ -1,3 +1,4 @@
+import { AuthService } from './../core/services/auth.service';
 import { NotificationService } from '../core/services/notification.service';
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -8,8 +9,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
+  token = ''
 
-  constructor(private ns: NotificationService) { }
+  constructor(private ns: NotificationService, private auth: AuthService) {
+    this.auth.getUserToken().subscribe((_token: any) => {
+      this.token = _token
+    })
+  }
 
   ngOnInit(): void {
   }
