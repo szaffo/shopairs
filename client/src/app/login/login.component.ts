@@ -16,6 +16,10 @@ export class LoginComponent {
   sub: any
 
   constructor(public authService: AuthService, private route: ActivatedRoute) {
+    // this.authService.checkRedirect()
+  }
+
+  ngOnInit(): void {
     this.authService.checkRedirect()
   }
 
