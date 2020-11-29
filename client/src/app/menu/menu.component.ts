@@ -9,5 +9,14 @@ import { Observable } from 'rxjs';
 	styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent {
-	constructor(public auth: AuthService) {}
+	profilePic = ''
+	name = 'User'
+	email = ''
+	constructor(public auth: AuthService) {
+		auth.getUser().subscribe(user => {
+			this.profilePic = user.photoURL
+			this.name = user.displayName || 'User'
+			this.email = user.email
+		})
+	}
 }

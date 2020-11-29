@@ -98,14 +98,10 @@ export class AuthService {
 
   getUserToken(): any {
     return this.firebaseAuth.idToken
-    // return firebase.default.auth().currentUser?.getIdToken()
-      // .then((token: string) => {
-      //   return token
-      // })
-      // .catch(err => {
-      //   console.debug(err)
-      //   return ''
-      // })
+  }
+
+  getUser(): any {
+    return this.firebaseAuth.user
   }
 
 }

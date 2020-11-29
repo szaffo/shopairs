@@ -1,4 +1,15 @@
 <mat-list>
+  <mat-list-item class="avatar">
+    <!-- <h3 class="name" mat-line>{{ this.name }}</h3> -->
+    
+    <mat-card-header>
+      <img *ngIf="this.profilePic" mat-card-avatar src="{{this.profilePic}}" />
+      <mat-card-title>{{this.name}}</mat-card-title>
+      <mat-card-subtitle>{{this.email}}</mat-card-subtitle>
+  
+    </mat-card-header>
+  </mat-list-item>
+
   <mat-list-item
     routerLink="/lists"
     routerLinkActive="active"
