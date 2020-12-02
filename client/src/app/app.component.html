@@ -1,4 +1,4 @@
-<div *ngIf="this.drawer() else nodrawer">
+<div *ngIf="this.drawer() else nodrawer" (swiperight)="snav.open()" (swipeleft)="snav.close()">
   <div class="tb" [class.example-is-mobile]="mobileQuery.matches">
     <mat-toolbar color="primary" class="example-toolbar">
       <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
@@ -12,7 +12,7 @@
             </mat-nav-list>
         </mat-sidenav>
 
-        <mat-sidenav-content>
+        <mat-sidenav-content >
           <main>
               <div class='aligner' fxLayout="column" fxLayoutAlign="stretch center">
                   <router-outlet></router-outlet>
