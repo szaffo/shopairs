@@ -7,7 +7,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -46,7 +46,7 @@ import * as Hammer from 'hammerjs';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 export class MyHammerConfig extends HammerGestureConfig {
 	overrides = <any>{
-		swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+		swipe: { direction: Hammer.DIRECTION_ALL },
 	};
 }
 
@@ -93,6 +93,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 		AppRoutingModule,
 		MatCheckboxModule,
 		MatDialogModule,
+		HammerModule
 	],
 	providers: [
 		AuthService,

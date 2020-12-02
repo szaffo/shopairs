@@ -35,7 +35,7 @@ export class AppComponent implements OnDestroy {
     ].includes(this.router.url)
   }
 
-  swipe(e:any) {
+  swipeEv(e:any) {
     console.log('SWIPE')
   }
 }
