@@ -41,14 +41,14 @@ import { ItemComponent } from './lists/list/item/item.component';
 import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
 import { LandingComponent } from './landing/landing.component';
-// import { MatDialogModule } from '@angular/material/dialog';
-// import { SettingsComponent } from './settings/settings.component';
-// import { ProfileComponent } from './profile/profile.component';
-// import { IssuesComponent } from './issues/issues.component';
-// 	import { IssueComponent } from './issues/issue/issue.component';
-// import { AddIssueComponent } from './issues/add-issue/add-issue.component';
-// import { LoginComponent } from './login/login.component';
-	//import { IssueDialogComponent } from './issues/issue/issue.component';
+
+import * as Hammer from 'hammerjs';
+import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
+export class MyHammerConfig extends HammerGestureConfig {
+	overrides = <any>{
+		swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+	};
+}
 
 @NgModule({
 	declarations: [
@@ -95,7 +95,11 @@ import { LandingComponent } from './landing/landing.component';
 		MatDialogModule,
 	],
 	providers: [
-		AuthService
+		AuthService,
+		{
+			provide: HAMMER_GESTURE_CONFIG,
+			useClass: MyHammerConfig,
+		},
 	],
 	bootstrap: [AppComponent]
 })
