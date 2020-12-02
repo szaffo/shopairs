@@ -45,9 +45,17 @@ import { LandingComponent } from './landing/landing.component';
 import * as Hammer from 'hammerjs';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 export class MyHammerConfig extends HammerGestureConfig {
-	overrides = <any>{
-		swipe: { direction: Hammer.DIRECTION_ALL },
-	};
+	buildHammer(element: HTMLElement): HammerManager {
+		return new Hammer.Manager(element, {
+			touchAction: 'auto',
+			inputClass: Hammer.TouchInput,
+			recognizers: [
+				[Hammer.Swipe, {
+					direction: Hammer.DIRECTION_HORIZONTAL
+				}]
+			]
+		});
+	}
 }
 
 @NgModule({
