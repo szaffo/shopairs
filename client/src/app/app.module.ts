@@ -7,7 +7,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -40,14 +40,23 @@ import { ListComponent, RenameListDialog } from './lists/list/list.component';
 import { ItemComponent } from './lists/list/item/item.component';
 import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
-// import { MatDialogModule } from '@angular/material/dialog';
-// import { SettingsComponent } from './settings/settings.component';
-// import { ProfileComponent } from './profile/profile.component';
-// import { IssuesComponent } from './issues/issues.component';
-// 	import { IssueComponent } from './issues/issue/issue.component';
-// import { AddIssueComponent } from './issues/add-issue/add-issue.component';
-// import { LoginComponent } from './login/login.component';
-	//import { IssueDialogComponent } from './issues/issue/issue.component';
+import { LandingComponent } from './landing/landing.component';
+
+import * as Hammer from 'hammerjs';
+import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
+export class MyHammerConfig extends HammerGestureConfig {
+	buildHammer(element: HTMLElement): HammerManager {
+		return new Hammer.Manager(element, {
+			touchAction: 'auto',
+			inputClass: Hammer.TouchInput,
+			recognizers: [
+				[Hammer.Swipe, {
+					direction: Hammer.DIRECTION_HORIZONTAL
+				}]
+			]
+		});
+	}
+}
 
 @NgModule({
 	declarations: [
@@ -63,6 +72,7 @@ import { environment } from 'src/environments/environment';
 		SettingsComponent,
 		PairComponent,
 		LoginComponent,
+		LandingComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -91,9 +101,14 @@ import { environment } from 'src/environments/environment';
 		AppRoutingModule,
 		MatCheckboxModule,
 		MatDialogModule,
+		HammerModule
 	],
 	providers: [
-		AuthService
+		AuthService,
+		{
+			provide: HAMMER_GESTURE_CONFIG,
+			useClass: MyHammerConfig,
+		},
 	],
 	bootstrap: [AppComponent]
 })

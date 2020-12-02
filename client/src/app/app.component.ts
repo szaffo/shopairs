@@ -1,7 +1,7 @@
 import { AuthService } from './core/services/auth.service';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +13,11 @@ export class AppComponent implements OnDestroy {
   mobileQuery: MediaQueryList;
   private _mobileQueryListener: () => void;
   
-  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher, public router: Router, private as: AuthService) {
+  constructor(
+    changeDetectorRef: ChangeDetectorRef,
+    media: MediaMatcher,
+    public router: Router,
+    ){
     this.mobileQuery = media.matchMedia('(max-width: 990px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
@@ -21,5 +25,17 @@ export class AppComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);
+  }
+
+  drawer(): boolean {
+    return [
+      '/lists',
+      '/settings',
+      '/pair'
+    ].includes(this.router.url)
+  }
+
+  swipeEv(e:any) {
+    console.log('SWIPE')
   }
 }
