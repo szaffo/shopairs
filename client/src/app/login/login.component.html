@@ -1,5 +1,5 @@
 <div class="aligner" fxLayout="row" fxLayoutAlign="center center" >
-    <mat-card>
+    <mat-card *ngIf="!this.inProgress()">
         <mat-card-header>
             <mat-card-title *ngIf="this.register">Sign up to shopairs</mat-card-title>
             <mat-card-title *ngIf="!this.register">Sign in to shopairs</mat-card-title>
@@ -18,7 +18,8 @@
                 
                 <mat-form-field appearance="outline">
                     <mat-label>Password</mat-label>
-                    <input [type]="hide ? 'password' : 'text'" [(ngModel)]="password" placeholder="Enter password" matInput (keydown.enter)="login()">
+                    <input [type]="hide ? 'password' : 'text'" [(ngModel)]="password" placeholder="Enter password" matInput (keydown.enter)="login()" *ngIf="!this.register">
+                    <input [type]="hide ? 'password' : 'text'" [(ngModel)]="password" placeholder="Enter password" matInput (keydown.enter)="signup()" *ngIf="this.register">
                     <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                         <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                     </button>
@@ -39,4 +40,6 @@
         </mat-card-content>
         
     </mat-card>
+
+    <mat-spinner *ngIf="this.inProgress()" color='accent'></mat-spinner>
 </div>

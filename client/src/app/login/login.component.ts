@@ -1,3 +1,4 @@
+import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 import { AuthService } from './../core/services/auth.service';
 import { Component, OnInit, Input } from '@angular/core';
@@ -18,12 +19,20 @@ export class LoginComponent {
   constructor(
     public authService: AuthService,
     public router: Router,
+    private cookiService: CookieService
     ) {
     this.register = this.router.url == '/register'
   }
 
   ngOnInit(): void {
-    this.authService.checkRedirect()
+    if (this.cookiService.check('loginMethod')) {
+      if (this.cookiService.get('loginMethod') === 'email') {
+        this.authService.checkLogin()
+      } else {
+        this.authService.checkRedirect()
+      }
+    }
+    // this.authService.checkRedirect()
   }
 
   signup() {
@@ -58,6 +67,10 @@ export class LoginComponent {
     this.authService.loginFacebook();
     this.disabled = false
     this.password = '';
+  }
+
+  inProgress(): boolean {
+    return this.cookiService.check('loginMethod')
   }
 
 }
