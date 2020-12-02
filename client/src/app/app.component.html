@@ -25,7 +25,7 @@
 <ng-template #nodrawer>
   <mat-toolbar color="primary">
     <div class="landing" [ngClass]="{'small': mobileQuery.matches}">
-      <h1>Shopairs</h1>
+      <h1 (click)="this.router.navigate(['/'])">Shopairs</h1>
       <div class='login-btns'>
         <button (click)="this.router.navigate(['/login'])" mat-button>Sign in</button>
         <button (click)="this.router.navigate(['/register'])" mat-raised-button color="accent">Sign up</button>
