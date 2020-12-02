@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import * as firebase from 'firebase';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,12 +15,14 @@ export class AuthService {
   constructor(
     private firebaseAuth: AngularFireAuth,
     private router: Router,
-    private ns: NotificationService
+    private ns: NotificationService,
+    private cookieService: CookieService
     ) {
       this.user = firebaseAuth.authState;
     }
 
   signup(email: string, password: string) {
+    this.cookieService.set('loginMethod', 'email')
     this.firebaseAuth
       .createUserWithEmailAndPassword(email, password)
       .then(value => {
@@ -32,18 +35,21 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
+    this.cookieService.set('loginMethod', 'email')
     this.firebaseAuth
       .signInWithEmailAndPassword(email, password)
-      .then(value => {
+      .then(() => {
         this.router.navigate(['lists'])
       })
       .catch(err => {
         this.ns.show(this.handleErrors(err))
+        this.cookieService.delete('loginMethod')
         console.log('Something went wrong:', err.message);
       });
   }
 
   logout() {
+    this.cookieService.delete('loginMethod')
     this.firebaseAuth.signOut()
       .then(() => {
         this.router.navigate(['/'])
@@ -54,10 +60,12 @@ export class AuthService {
   }
 
   loginGoogle() {
+    this.cookieService.set('loginMethod', 'googleProvider')
     this.loginWithProvider(new firebase.default.auth.GoogleAuthProvider())
   }
 
   loginFacebook() {
+    this.cookieService.set('loginMethod', 'facebookProvider')
     this.loginWithProvider(new firebase.default.auth.FacebookAuthProvider())
   }
 
@@ -68,21 +76,38 @@ export class AuthService {
       })
       .catch(err => {
         this.ns.show(this.handleErrors(err))
+        this.cookieService.delete('loginMethod')
         console.log('Something went wrong:', err.message);
       });
   }
 
   checkRedirect(): void {
     this.firebaseAuth.getRedirectResult().then((result: any) => {
-      console.debug('User logged in')
       if (result) {
+        console.debug('User logged in')
         this.router.navigate(['lists'])
+      } else {
+        this.cookieService.delete('loginMethod')
       }
     })
     .catch((err) => {
       console.log(err)
+      this.cookieService.delete('loginMethod')
       this.ns.show(this.handleErrors(err))
     })
+  }
+
+  checkLogin(): void {
+    this.user.subscribe((user:any) => {
+      console.log(user)
+      if (user) {
+        console.debug('User logged in')
+        this.router.navigate(['lists'])
+      } else {
+        this.cookieService.delete('loginMethod')
+      }
+    })
+          
   }
 
   handleErrors(error: any): string {
