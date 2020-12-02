@@ -40,6 +40,7 @@ import { ListComponent, RenameListDialog } from './lists/list/list.component';
 import { ItemComponent } from './lists/list/item/item.component';
 import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
+import { LandingComponent } from './landing/landing.component';
 // import { MatDialogModule } from '@angular/material/dialog';
 // import { SettingsComponent } from './settings/settings.component';
 // import { ProfileComponent } from './profile/profile.component';
@@ -63,6 +64,7 @@ import { environment } from 'src/environments/environment';
 		SettingsComponent,
 		PairComponent,
 		LoginComponent,
+		LandingComponent,
 	],
 	imports: [
 		BrowserModule,

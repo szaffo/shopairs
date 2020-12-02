@@ -1,4 +1,4 @@
-import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from './../core/services/auth.service';
 import { Component, OnInit, Input } from '@angular/core';
 
@@ -12,11 +12,14 @@ export class LoginComponent {
   password: string = ''
   disabled = false
   hide = true
-  @Input() register = false
+  register = false
   sub: any
 
-  constructor(public authService: AuthService, private route: ActivatedRoute) {
-    // this.authService.checkRedirect()
+  constructor(
+    public authService: AuthService,
+    public router: Router,
+    ) {
+    this.register = this.router.url == '/register'
   }
 
   ngOnInit(): void {
