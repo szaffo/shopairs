@@ -35,19 +35,23 @@ export default class SocketEventHandler {
   }
 
   /**
-   * Registers events to thew socket
+   * Registers events to the socket
    */
   private registerHandlers(socket: SocketIO.Socket) {
     for (let event in this.handleMap) {
       const record: HandleMapRecord = this.handleMap[event]
       socket.on(event, (data: string) => {
+        
+        const parsed_data = this.safeParse(data)
+        
         const request: SocketRequest = {
           rawData: data,
           event: event,
           mappedFunction: record.function,
           dataFilter: record.dataFilter,
           socket: socket,
-          data: this.safeParse(data)
+          data: parsed_data,
+          histId: parsed_data.histId || -33 // Note that, sending back the history id is a ferature, but the client doesn't have to sen the histId.
         }
 
         this.process(request)
@@ -68,6 +72,7 @@ export default class SocketEventHandler {
 
   /**
    * Process the request
+   * Search for a handler function that can hadle this request
    */
   private async process(request: SocketRequest) {
     request.mappedFunction = (Object.keys(request.data).length > 0) ? request.mappedFunction.bind(this.dbh) : () => new DatabaseError("No or badly formatted data")
@@ -80,7 +85,9 @@ export default class SocketEventHandler {
    * Serve the request. Sends back some data
    */
   private async serve(request: SocketRequest) {
-    request.socket.emit(request.event, await this.response(request.mappedFunction, request.dataFilter(request.data)))
+    let response = await this.response(request.mappedFunction, request.dataFilter(request.data))
+    response.histId = request.histId // Sending back the history id. It will be -33 if the there was none in the request
+    request.socket.emit(request.event, response)
     // TODO after serve, sync the other user of the pair, if connected (butler?)
   }
 
@@ -105,12 +112,14 @@ export default class SocketEventHandler {
       return {
         success: false,
         error: (result instanceof DatabaseError) ? result.definition() : result.message,
-        origin: (result instanceof DatabaseError) ? 'DatabaseHandler' : 'EventHandler'
+        origin: (result instanceof DatabaseError) ? 'DatabaseHandler' : 'EventHandler',
+        histId: -1 // Setting it later, just before the emit 
       }
     } else {
       return {
         success: true,
-        data: result
+        data: result,
+        histId: -1 // Setting it later, just before the emit 
       }
     }
   }
@@ -135,13 +144,15 @@ type SocketInput = {
 
 type SuccessfullSocketResponse = {
   success: true,
-  data: any
+  data: any,
+  histId: number
 }
 
 type FailedSocketResponse = {
   success: false,
   error: DatabaseErrorMessage,
-  origin: 'DatabaseHandler' | 'EventHandler'
+  origin: 'DatabaseHandler' | 'EventHandler',
+  histId: number
 }
 
 type HandleMapType = {
@@ -163,5 +174,6 @@ type SocketRequest = {
   event: SocketEvent | string
   mappedFunction: CallableFunction,
   dataFilter: DataFilterType,
-  socket: SocketIO.Socket
+  socket: SocketIO.Socket,
+  histId: number
 }
