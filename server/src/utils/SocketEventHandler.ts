@@ -10,17 +10,17 @@ export default class SocketEventHandler {
     this.dbh = databaseHandler
     // This table shows which function janldes which event. The dataFilter is a function that filters the args for the handler
     this.handleMap = {
-      createNewPair: { function: this.dbh.createNewPair, dataFilter: (data) => [data.email, data.password] },
-      getLists: { function: this.dbh.getLists, dataFilter: (data) => [data.email, data.password] },
-      login: { function: this.dbh.getUser, dataFilter: (data) => [data.email, data.password] },
-      register: { function: this.dbh.registerUser, dataFilter: (data) => [data.email, data.password, data.name] },
-      joinToPair: { function: this.dbh.joinToPair, dataFilter: (data) => [data.email, data.password, data.connectionCode] },
-      deletePair: { function: this.dbh.deletePair, dataFilter: (data) => [data.email, data.password] },
-      createList: { function: this.dbh.createList, dataFilter: (data) => [data.email, data.password, data.name] },
-      addItem: { function: this.dbh.addItemToList, dataFilter: (data) => [data.email, data.password, data.listId, data.itemName, data.quantity] },
-      deleteList: { function: this.dbh.deleteList, dataFilter: (data) => [data.email, data.password, data.listId] },
-      renameList: { function: this.dbh.renameList, dataFilter: (data) => [data.email, data.password, data.listId, data.listName] },
-      deleteItem: { function: this.dbh.deleteItem, dataFilter: (data) => [data.email, data.password, data.itemId] },
+      createNewPair: { function: this.dbh.createNewPair, dataFilter: (data) => [data.token] },
+      getLists: { function: this.dbh.getLists, dataFilter: (data) => [data.token] },
+      login: { function: this.dbh.getUser, dataFilter: (data) => [data.token] },
+      register: { function: this.dbh.registerUser, dataFilter: (data) => [data.token, data.name] },
+      joinToPair: { function: this.dbh.joinToPair, dataFilter: (data) => [data.token, data.connectionCode] },
+      deletePair: { function: this.dbh.deletePair, dataFilter: (data) => [data.token] },
+      createList: { function: this.dbh.createList, dataFilter: (data) => [data.token, data.name] },
+      addItem: { function: this.dbh.addItemToList, dataFilter: (data) => [data.token, data.listId, data.itemName, data.quantity] },
+      deleteList: { function: this.dbh.deleteList, dataFilter: (data) => [data.token, data.listId] },
+      renameList: { function: this.dbh.renameList, dataFilter: (data) => [data.token, data.listId, data.listName] },
+      deleteItem: { function: this.dbh.deleteItem, dataFilter: (data) => [data.token, data.itemId] },
     }
     this.listen()
   }
@@ -129,7 +129,8 @@ type SocketInput = {
   listId: number
   itemName: string,
   quantity: number,
-  itemId: number
+  itemId: number,
+  token: string
 }
 
 type SuccessfullSocketResponse = {
