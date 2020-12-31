@@ -10,12 +10,12 @@ export default class SocketEventHandler {
     this.dbh = databaseHandler
     // This table shows which function janldes which event. The dataFilter is a function that filters the args for the handler
     this.handleMap = {
-      createNewPair: { function: this.dbh.createNewPair, dataFilter: (data) => [data.token] },
+      // createNewPair: { function: this.dbh.createNewPair, dataFilter: (data) => [data.token] }, // Pairs should already exists after register
       getLists: { function: this.dbh.getLists, dataFilter: (data) => [data.token] },
-      login: { function: this.dbh.getUser, dataFilter: (data) => [data.token] },
-      register: { function: this.dbh.registerUser, dataFilter: (data) => [data.token, data.name] },
+      getUserData: { function: this.dbh.getUser, dataFilter: (data) => [data.token] },
+      register: { function: this.dbh.registerUser, dataFilter: (data) => [data.token, data.name] }, // This should create the new user in the database with a pair
       joinToPair: { function: this.dbh.joinToPair, dataFilter: (data) => [data.token, data.connectionCode] },
-      deletePair: { function: this.dbh.deletePair, dataFilter: (data) => [data.token] },
+      deletePair: { function: this.dbh.deletePair, dataFilter: (data) => [data.token] }, // we should focus on this later
       createList: { function: this.dbh.createList, dataFilter: (data) => [data.token, data.name] },
       addItem: { function: this.dbh.addItemToList, dataFilter: (data) => [data.token, data.listId, data.itemName, data.quantity] },
       deleteList: { function: this.dbh.deleteList, dataFilter: (data) => [data.token, data.listId] },
