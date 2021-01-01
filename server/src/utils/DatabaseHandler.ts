@@ -374,10 +374,6 @@ export default class DatabaseHandler {
     this.prisma.$disconnect();
   }
 
-
-  // TODO make tests
-  // TODO CI 
-  // TODO CD
 }
 
 /* -------------------------------------------------------------------------- */
