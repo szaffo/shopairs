@@ -17,14 +17,17 @@ export class DatabaseError extends Error {
 export default class DatabaseHandler {
   private prisma: PrismaClient;
 
-  constructor() {
+  constructor(log: boolean = true) {
     this.prisma = new PrismaClient();
-    this.prisma.$use(async (params, next) => {
-      console.log(`Prisma.${params.model}.${params.action}(${JSON.stringify(params.args)})`) // TODO add to logger
-      return next(params)
-      // In memory of 4 hours bug searching:
-      // I forgot to put return in before next(params)
-    })
+    
+    if (log) {   
+      this.prisma.$use(async (params, next) => {
+        console.log(`Prisma.${params.model}.${params.action}(${JSON.stringify(params.args)})`) // TODO add to logger
+        return next(params)
+        // In memory of 4 hours bug searching:
+        // I forgot to put return in before next(params)
+      })
+    }
   }
 
   async registerUser(email: string, name?: string): Promise<User | DatabaseError> {

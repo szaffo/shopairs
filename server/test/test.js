@@ -1,8 +1,12 @@
 const DatabaseHandler = require("../dist/utils/DatabaseHandler");
-let dbh = new DatabaseHandler.default();
+let dbh;
 
 describe("Server", function () {
   describe("DatabaseHandler", function () {
+    before(function () {
+      dbh = new DatabaseHandler.default((log = false));
+    });
+
     after(function () {
       dbh.disconnect();
     });
@@ -10,7 +14,7 @@ describe("Server", function () {
     describe("#getUser()", function (done) {
       it("should give back an user", (done) => {
         dbh
-          .getUser("t@eszter.hu", "admin")
+          .getUser("t@eszter.hu")
           .then((user) => {
             if (user instanceof DatabaseHandler.DatabaseError) {
               done(user);
@@ -25,7 +29,7 @@ describe("Server", function () {
 
       it("should not give back an user", (done) => {
         dbh
-          .getUser("wrong@eszter.hu", "admin")
+          .getUser("wrong@eszter.hu")
           .then((user) => {
             if (user instanceof DatabaseHandler.DatabaseError) {
               done();
@@ -42,7 +46,7 @@ describe("Server", function () {
     describe("#createNewPair()", function () {
       it("should not create a pair", (done) => {
         dbh
-          .createNewPair("t@eszter.hu", "admin")
+          .createNewPair("t@eszter.hu")
           .then((pair) => {
             if (pair instanceof DatabaseHandler.DatabaseError) {
               done();
