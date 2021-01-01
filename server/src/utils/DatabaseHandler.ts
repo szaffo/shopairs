@@ -28,33 +28,23 @@ export default class DatabaseHandler {
     })
   }
 
-  async registerUser(
-    email: string,
-    password: string,
-    name?: string
-  ): Promise<User | DatabaseError> {
-    return await this.authenticateUser(email, password).then((succes) => {
-      if (succes instanceof DatabaseError) {
-        return hashPassword(password).then((hash) => {
-          return this.prisma.user.create({
-            data: { email, password: hash, name },
-          }).then((user) => {
-            user.password = "HIDDEN"
-            return user
-          })
-        })
+  async registerUser(email: string, name?: string): Promise<User | DatabaseError> {
+    const user = await this.getUser(email)    
+    
+    if (user instanceof DatabaseError) {
+      return this.prisma.user.create({
+        data: { email, name },
+      }).then((user) => {
+        return user
+      })  
+    } else {
+      return new DatabaseError('User already exists')
+    }
 
-      } else {
-        return new DatabaseError("User already exists");
-      }
-    })
   }
 
-  async createNewPair(
-    email: string,
-    password: string
-  ): Promise<Pair | DatabaseError> {
-    return await this.getUser(email, password).then((user) => {
+  async createNewPair(email: string): Promise<Pair | DatabaseError> {
+    return await this.getUser(email).then((user) => {
       if (user instanceof DatabaseError) {
         return new DatabaseError("Email or password is not correct");
       } else {
@@ -88,75 +78,53 @@ export default class DatabaseHandler {
    * authenticates too!
    */
 
-  async authenticateUser(email: string, password: string): Promise<Boolean | DatabaseError> {
-    return await this.prisma.user.findFirst({
-      where: { email }, // Email has a unique constraint
-      select: { password: true }
-    }).then((user) => {
-      if (!(user instanceof Object)) return new DatabaseError("User not found in the database");
-      // ! DO NOT tell the client the email is not exists.
-      // ! Just send back "Email or password is incorrect"
-      // ! They don't have to know everything. It's more secure this way.
+  // async authenticateUser(email: string, password: string): Promise<Boolean | DatabaseError> {
+    // return true
+    // return await this.prisma.user.findFirst({
+    //   where: { email }, // Email has a unique constraint
+    //   select: { password: true }
+    // }).then((user) => {
+    //   if (!(user instanceof Object)) return new DatabaseError("User not found in the database");
+    //   // ! DO NOT tell the client the email is not exists.
+    //   // ! Just send back "Email or password is incorrect"
+    //   // ! They don't have to know everything. It's more secure this way.
 
-      return comparePassword(password, user.password).then((success) => {
-        return success
+    //   return comparePassword(password, user.password).then((success) => {
+    //     return success
+    //   })
+    // })
+  // }
+
+
+  async getUser(email: string): Promise<UserData | DatabaseError> {
+    return this.prisma.user
+      .findOne({
+        where: { email }, // Email has a unique constraint
+        select: {
+          email: true,
+          name: true,
+          id: true,
+          updated_at: true,
+          created_at: true,
+          createdPair: true,
+          joinnedToPair: true,
+        },
       })
-    })
+      .then((user) => {
+        if (user) {
+          return user;
+        } else {
+          return new DatabaseError("User does not exists");
+        }
+      });
   }
 
-  /**
-   * * The getUser is a secure way to get the data about the
-   * * user. It also authenticates the user, checks for existance,
-   * * and the returned user object won't include the password field
-   */
-
-  async getUser(email: string, password: string): Promise<UserData | DatabaseError> {
-    return await this.authenticateUser(email, password).then((succes) => {
-
-      // ! DO NOT tell the client the email is not exists.
-      // ! Just send back "Email or password is incorrect"
-      // ! They don't have to know everything. It's more secure this way.
-
-
-      if (succes instanceof DatabaseError) {
-        return new DatabaseError('Email or password is not correct')
-      }
-
-      if (!succes) {
-        return new DatabaseError("Email or password is not correct");
-      }
-
-      return this.prisma.user
-        .findOne({
-          where: { email }, // Email has a unique constraint
-          select: {
-            email: true,
-            name: true,
-            id: true,
-            updated_at: true,
-            created_at: true,
-            createdPair: true,
-            joinnedToPair: true,
-            password: true, // Pw is a must here. Hiding in the next .then()
-          },
-        })
-        .then((user) => {
-          if (user) {
-            user.password = "HIDDEN"; // ! This may cause some error later
-            return user;
-          } else {
-            return new DatabaseError("User does not exists");
-          }
-        });
-    });
-  }
 
   async joinToPair(
     email: string,
-    password: string,
     connectionCode: string
   ): Promise<Pair | DatabaseError> {
-    return await this.getUser(email, password).then((user) => {
+    return await this.getUser(email).then((user) => {
       if (user instanceof DatabaseError) {
         return new DatabaseError(
           "User does not exists or failed to authenticate"
@@ -188,11 +156,8 @@ export default class DatabaseHandler {
     });
   }
 
-  async deletePair(
-    email: string,
-    password: string
-  ): Promise<Pair | DatabaseError> {
-    return await this.getUser(email, password).then((user) => {
+  async deletePair(email: string): Promise<Pair | DatabaseError> {
+    return await this.getUser(email).then((user) => {
       if (user instanceof DatabaseError) {
         return user;
       }
@@ -214,8 +179,8 @@ export default class DatabaseHandler {
   }
 
 
-  async createList(email: string, password: string, name: string): Promise<List | DatabaseError> {
-    return await this.getUser(email, password).then((user) => {
+  async createList(email: string, name: string): Promise<List | DatabaseError> {
+    return await this.getUser(email).then((user) => {
       if (user instanceof DatabaseError) {
         return user
       }
@@ -242,8 +207,8 @@ export default class DatabaseHandler {
 
   }
 
-  async addItemToList(email: string, password: string, listId: number, itemName: string, quantity?: number): Promise<Item | DatabaseError> {
-    return await this.getUser(email, password).then((user) => {
+  async addItemToList(email: string, listId: number, itemName: string, quantity?: number): Promise<Item | DatabaseError> {
+    return await this.getUser(email).then((user) => {
       if (user instanceof DatabaseError) {
         return user
       }
@@ -285,11 +250,8 @@ export default class DatabaseHandler {
     })
   }
 
-  async getLists(
-    email: string,
-    password: string
-  ): Promise<List[] | DatabaseError> {
-    return await this.getUser(email, password).then((user) => {
+  async getLists(email: string): Promise<List[] | DatabaseError> {
+    return await this.getUser(email).then((user) => {
       if (user instanceof DatabaseError) {
         return user;
       }
@@ -320,9 +282,9 @@ export default class DatabaseHandler {
     })
   }
 
-  async deleteList(email: string, password: string, listId: number): Promise<List | DatabaseError> {
+  async deleteList(email: string, listId: number): Promise<List | DatabaseError> {
 
-    const user = await this.getUser(email, password);
+    const user = await this.getUser(email);
 
     if (user instanceof DatabaseError) {
       return user;
@@ -349,8 +311,8 @@ export default class DatabaseHandler {
       });
   }
 
-  async renameList(email: string, password: string, listId: number, listName: string): Promise<List | DatabaseError> {
-    const user = await this.getUser(email, password);
+  async renameList(email: string, listId: number, listName: string): Promise<List | DatabaseError> {
+    const user = await this.getUser(email);
 
     if (user instanceof DatabaseError) {
       return user
@@ -366,8 +328,8 @@ export default class DatabaseHandler {
 
   }
 
-  async deleteItem(email: string, password: string, itemId: number) {
-    const user = await this.getUser(email, password);
+  async deleteItem(email: string, itemId: number) {
+    const user = await this.getUser(email);
     
     if (user instanceof DatabaseError) {
       return user
@@ -429,7 +391,6 @@ export type UserData = {
   joinnedToPair: Pair | null;
   id: number;
   email: string;
-  password: string;
   name: string | null;
   updated_at: Date;
   created_at: Date;

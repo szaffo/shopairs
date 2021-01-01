@@ -12,16 +12,16 @@ export default class SocketEventHandler {
     // This table shows which function janldes which event. The dataFilter is a function that filters the args for the handler
     this.handleMap = {
       // createNewPair: { function: this.dbh.createNewPair, dataFilter: (data) => [data.token] }, // Pairs should already exists after register
-      getLists: { function: this.dbh.getLists, dataFilter: (data) => [data.token] },
-      getUserData: { function: this.dbh.getUser, dataFilter: (data) => [data.token] },
-      register: { function: this.dbh.registerUser, dataFilter: (data) => [data.token, data.name] }, // This should create the new user in the database with a pair
-      joinToPair: { function: this.dbh.joinToPair, dataFilter: (data) => [data.token, data.connectionCode] },
-      deletePair: { function: this.dbh.deletePair, dataFilter: (data) => [data.token] }, // we should focus on this later
-      createList: { function: this.dbh.createList, dataFilter: (data) => [data.token, data.name] },
-      addItem: { function: this.dbh.addItemToList, dataFilter: (data) => [data.token, data.listId, data.itemName, data.quantity] },
-      deleteList: { function: this.dbh.deleteList, dataFilter: (data) => [data.token, data.listId] },
-      renameList: { function: this.dbh.renameList, dataFilter: (data) => [data.token, data.listId, data.listName] },
-      deleteItem: { function: this.dbh.deleteItem, dataFilter: (data) => [data.token, data.itemId] },
+      getLists: { function: this.dbh.getLists, dataFilter: () => [] },
+      getUserData: { function: this.dbh.getUser, dataFilter: () => [] },
+      register: { function: this.dbh.registerUser, dataFilter: (data) => [data.name] }, // This should create the new user in the database with a pair
+      joinToPair: { function: this.dbh.joinToPair, dataFilter: (data) => [data.connectionCode] },
+      deletePair: { function: this.dbh.deletePair, dataFilter: (data) => [] }, // we should focus on this later
+      createList: { function: this.dbh.createList, dataFilter: (data) => [data.name] },
+      addItem: { function: this.dbh.addItemToList, dataFilter: (data) => [data.listId, data.itemName, data.quantity] },
+      deleteList: { function: this.dbh.deleteList, dataFilter: (data) => [data.listId] },
+      renameList: { function: this.dbh.renameList, dataFilter: (data) => [data.listId, data.listName] },
+      deleteItem: { function: this.dbh.deleteItem, dataFilter: (data) => [data.itemId] },
     }
     this.listen()
   }
@@ -55,6 +55,10 @@ export default class SocketEventHandler {
           token: parsed_data.token || ''
         }
 
+        // These values are lifted up to root of request
+        delete request.data.histId
+        delete request.data.token
+
         this.process(request)
       })
     }
@@ -83,7 +87,7 @@ export default class SocketEventHandler {
     if (request.userData == null) {
       request.mappedFunction = () => new Error("Authentication failed")
     } else {
-      request.mappedFunction = (Object.keys(request.data).length > 2) ? request.mappedFunction.bind(this.dbh) : () => new DatabaseError("No or badly formatted data")
+      request.mappedFunction = (Object.keys(request.data).length > 0) ? request.mappedFunction.bind(this.dbh) : () => new DatabaseError("No or badly formatted data")
     }
     
     // console.log('Data from socket:', request.data) // TODO move to logger, and remove the auth token from it
@@ -98,7 +102,8 @@ export default class SocketEventHandler {
    * Serve the request. Sends back some data
    */
   private async serve(request: SocketRequest) {
-    let response = await this.response(request.mappedFunction, request.dataFilter(request.data))
+    const email = request.userData ? request.userData.email : ''
+    let response = await this.response(request.mappedFunction, [email, ...request.dataFilter(request.data)])
     response.histId = request.histId // Sending back the history id. It will be -33 if the there was none in the request
     request.socket.emit(request.event, response)
   }
@@ -151,7 +156,8 @@ type SocketInput = {
   itemName: string,
   quantity: number,
   itemId: number,
-  token: string
+  token?: string,
+  histId?: number
 }
 
 type SuccessfullSocketResponse = {

@@ -13,7 +13,6 @@ export async function validateToken(token: any) {
             return decodedToken
         })
         .catch((error) => {
-            // TODO Handle error
-            console.log(error.message)
+            return null
         });
 }
