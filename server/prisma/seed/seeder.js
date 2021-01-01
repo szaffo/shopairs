@@ -1,5 +1,4 @@
 const { PrismaClient } = require("@prisma/client");
-const bcrypt = require("bcrypt");
 const util = require("util");
 
 const EMAIL_1 = 'jozsika88@citromail.hu';
@@ -12,13 +11,11 @@ const EMAIL_3 = "mpisti@mail.hu";
   await db.list.deleteMany();
   await db.pair.deleteMany();
   await db.user.deleteMany();
-  let hash = await bcrypt.hash("admin", 12);
   
   await db.user.create({
     data: {
       name: "Szingli Jóska",
       email: EMAIL_1,
-      password: hash,
       createdPair: {
         create: {
           connection_code: 'TEST_PAIR'
@@ -33,14 +30,12 @@ const EMAIL_3 = "mpisti@mail.hu";
         create: {
           name: "Minta Pista",
           email: EMAIL_3,
-          password: hash,
         },
       },
       joinner: {
         create: {
           name: "T.Eszter",
           email: EMAIL_2,
-          password: hash,
         },
       },
       lists: {
@@ -92,7 +87,6 @@ const EMAIL_3 = "mpisti@mail.hu";
   console.log('\nSeeding done')
   console.log('\n\Current state of the database\n')
   console.log(util.inspect(pairs, false, null, true /* enable colors */));
-  console.log('\n\nUse `admin` as password wit the following emails:\n')
   console.log(EMAIL_1)
   console.log(EMAIL_2)
   console.log(EMAIL_3)
