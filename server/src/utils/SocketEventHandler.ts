@@ -1,4 +1,5 @@
 import DatabaseHandler, { DatabaseError, DatabaseErrorMessage, UserData } from "./DatabaseHandler";
+import { validateToken } from "./validation";
 
 export default class SocketEventHandler {
   private io: SocketIO.Server
@@ -40,10 +41,9 @@ export default class SocketEventHandler {
   private registerHandlers(socket: SocketIO.Socket) {
     for (let event in this.handleMap) {
       const record: HandleMapRecord = this.handleMap[event]
-      socket.on(event, (data: string) => {
-        
+      
+      socket.on(event, (data: string) => {  
         const parsed_data = this.safeParse(data)
-        
         const request: SocketRequest = {
           rawData: data,
           event: event,
@@ -51,7 +51,8 @@ export default class SocketEventHandler {
           dataFilter: record.dataFilter,
           socket: socket,
           data: parsed_data,
-          histId: parsed_data.histId || -33 // Note that, sending back the history id is a ferature, but the client doesn't have to sen the histId.
+          histId: parsed_data.histId || -33, // Note that, sending back the history id is a ferature, but the client doesn't have to send the histId.
+          token: parsed_data.token || ''
         }
 
         this.process(request)
@@ -71,14 +72,26 @@ export default class SocketEventHandler {
   }
 
   /**
-   * Process the request
-   * Search for a handler function that can hadle this request
+   * Authenticate the request (looking for valid token) and binding the mapped function
+   * Search for a handler function that will be executed to make the response
+   * Make the response, pack it, and emit back
+   * After emit, notify the other user to sync
    */
   private async process(request: SocketRequest) {
-    request.mappedFunction = (Object.keys(request.data).length > 0) ? request.mappedFunction.bind(this.dbh) : () => new DatabaseError("No or badly formatted data")
-    console.log('Data from socket:', request.data)
+    
+    request.userData = await validateToken(request.token)
+    if (request.userData == null) {
+      request.mappedFunction = () => new Error("Authentication failed")
+    } else {
+      request.mappedFunction = (Object.keys(request.data).length > 2) ? request.mappedFunction.bind(this.dbh) : () => new DatabaseError("No or badly formatted data")
+    }
+    
+    // console.log('Data from socket:', request.data) // TODO move to logger, and remove the auth token from it
     const result = await this.serve(request)
-    console.log('Result after handler:', result) // TODO add to logger
+    // console.log('Result after handler:', result) // TODO add to logger
+
+
+    // TODO Notify the other user in the pair about tha change here
   }
 
   /**
@@ -88,7 +101,6 @@ export default class SocketEventHandler {
     let response = await this.response(request.mappedFunction, request.dataFilter(request.data))
     response.histId = request.histId // Sending back the history id. It will be -33 if the there was none in the request
     request.socket.emit(request.event, response)
-    // TODO after serve, sync the other user of the pair, if connected (butler?)
   }
 
   /**
@@ -97,8 +109,8 @@ export default class SocketEventHandler {
   private async response(func: CallableFunction, args: any[]) {
     try {
       return this.packResponse(await func(...args))
-    } catch (error) {
-      return this.packResponse(error)
+    } catch (failedResponse) {
+      return this.packResponse(failedResponse)
     }
   }
 
@@ -175,5 +187,7 @@ type SocketRequest = {
   mappedFunction: CallableFunction,
   dataFilter: DataFilterType,
   socket: SocketIO.Socket,
-  histId: number
+  histId: number,
+  token: string,
+  userData? : any
 }
