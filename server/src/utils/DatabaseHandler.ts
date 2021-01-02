@@ -1,5 +1,4 @@
 import { Item, List, Pair, PrismaClient, User } from "@prisma/client";
-import { generator } from "./codeGenerator";
 
 // TODO Create constants for error messages
 
