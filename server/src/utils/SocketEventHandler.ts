@@ -9,13 +9,15 @@ export default class SocketEventHandler {
   constructor(io: SocketIO.Server, databaseHandler: DatabaseHandler) {
     this.io = io
     this.dbh = databaseHandler
-    // This table shows which function janldes which event. The dataFilter is a function that filters the args for the handler
+    // This table shows which function hanldes which event. The dataFilter is a function that filters the arguments for the handler
     this.handleMap = {
       register: { function: this.dbh.registerUser, dataFilter: (data) => [data.name] }, // This should create the new user in the database with a pair
-      joinToPair: { function: this.dbh.joinToPair, dataFilter: (data) => [data.partnerEmail] },
       getLists: { function: this.dbh.getLists, dataFilter: () => [] },
       getUserData: { function: this.dbh.getUser, dataFilter: () => [] },
-      deletePair: { function: this.dbh.deletePair, dataFilter: (data) => [] }, // we should focus on this later
+      
+      // TODO Notify the other user in the pair about the changes in the following events
+      joinToPair: { function: this.dbh.joinToPair, dataFilter: (data) => [data.partnerEmail] },
+      deletePair: { function: this.dbh.deletePair, dataFilter: () => [] }, 
       createList: { function: this.dbh.createList, dataFilter: (data) => [data.name] },
       addItem: { function: this.dbh.addItemToList, dataFilter: (data) => [data.listId, data.itemName, data.quantity] },
       deleteItem: { function: this.dbh.deleteItem, dataFilter: (data) => [data.itemId] },
