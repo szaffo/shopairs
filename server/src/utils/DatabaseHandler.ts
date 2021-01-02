@@ -44,55 +44,6 @@ export default class DatabaseHandler {
 
   }
 
-  async createNewPair(email: string): Promise<Pair | DatabaseError> {
-    return await this.getUser(email).then((user) => {
-      if (user instanceof DatabaseError) {
-        return new DatabaseError("Email or password is not correct");
-      } else {
-        if (user.createdPair || user.joinnedToPair) {
-          return new DatabaseError("The user already has a pair");
-        }
-
-
-        return this.prisma.pair.create({
-          data: {
-            creator: {
-              connect: { id: user.id }
-            },
-            // ! This code should be deleted when other user is joinning to the pair
-            // ! to avoid unique constraint fail
-            connection_code: generator(),
-          },
-        }).then((pair) => {
-          return pair
-        })
-
-      }
-
-    })
-
-  }
-
-
-
-  // async authenticateUser(email: string, password: string): Promise<Boolean | DatabaseError> {
-    // return true
-    // return await this.prisma.user.findFirst({
-    //   where: { email }, // Email has a unique constraint
-    //   select: { password: true }
-    // }).then((user) => {
-    //   if (!(user instanceof Object)) return new DatabaseError("User not found in the database");
-    //   // ! DO NOT tell the client the email is not exists.
-    //   // ! Just send back "Email or password is incorrect"
-    //   // ! They don't have to know everything. It's more secure this way.
-
-    //   return comparePassword(password, user.password).then((success) => {
-    //     return success
-    //   })
-    // })
-  // }
-
-
   async getUser(email: string): Promise<UserData | DatabaseError> {
     return this.prisma.user
       .findOne({
@@ -239,35 +190,34 @@ export default class DatabaseHandler {
   }
 
   async getLists(email: string): Promise<List[] | DatabaseError> {
-    return await this.getUser(email).then((user) => {
-      if (user instanceof DatabaseError) {
-        return user;
+    const user = await this.getUser(email)
+    
+    if (user instanceof DatabaseError) {
+      return new DatabaseError('User not found in the database');
+    }
+    
+    const pair = user.createdPair || user.joinnedToPair;
+
+    if (!pair) {
+      return new DatabaseError("You have to be in a pair first");
+    }
+
+    return this.prisma.list.findMany({
+      where: {
+        belongsTo: pair
+      },
+      select: {
+        name: true,
+        id: true,
+        created_at: true,
+        updated_at: true,
+        items: true,
+        belongs_to: true
       }
-
-      const pair = user.createdPair || user.joinnedToPair;
-
-      if (!pair) {
-        return new DatabaseError("User does not have a pair");
-      }
-
-
-      return this.prisma.list.findMany({
-        where: {
-          belongsTo: pair
-        },
-        select: {
-          name: true,
-          id: true,
-          created_at: true,
-          updated_at: true,
-          items: true,
-          belongs_to: true
-        }
-      }).then((lists) => {
-        return lists
-      })
-
+    }).then((lists) => {
+      return lists
     })
+
   }
 
   async deleteList(email: string, listId: number): Promise<List | DatabaseError> {
