@@ -16,11 +16,6 @@ const EMAIL_3 = "mpisti@mail.hu";
     data: {
       name: "Szingli Jóska",
       email: EMAIL_1,
-      createdPair: {
-        create: {
-          connection_code: 'TEST_PAIR'
-        }
-      }
     },
   });
 
