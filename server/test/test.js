@@ -1,3 +1,6 @@
+// TODO update this file
+// There are some case that tests functions that are deleted
+
 const DatabaseHandler = require("../dist/utils/DatabaseHandler");
 let dbh;
 
