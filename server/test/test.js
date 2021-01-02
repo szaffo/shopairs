@@ -1,6 +1,3 @@
-// TODO update this file
-// There are some case that tests functions that are deleted
-
 const DatabaseHandler = require("../dist/utils/DatabaseHandler");
 let dbh;
 
@@ -46,27 +43,10 @@ describe("Server", function () {
       });
     });
 
-    describe("#createNewPair()", function () {
-      it("should not create a pair", (done) => {
-        dbh
-          .createNewPair("t@eszter.hu")
-          .then((pair) => {
-            if (pair instanceof DatabaseHandler.DatabaseError) {
-              done();
-            } else {
-              done(new Error(pair.message));
-            }
-          })
-          .catch((error) => {
-            done(error);
-          });
-      });
-    });
-
     describe("#joinToPair()", function () {
       it("should not join to a pair", (done) => {
         dbh
-          .joinToPair("jozsika88@citromail.hu", "admin", "TEST_PAIR")
+          .joinToPair("jozsika88@citromail.hu", "mpisti@mail.hu")
           .then((pair) => {
             if (pair instanceof DatabaseHandler.DatabaseError) {
               done();
@@ -83,7 +63,7 @@ describe("Server", function () {
     describe("#deletePair()", function () {
       it("should not delete a pair", (done) => {
         dbh
-          .deletePair("jozsika88@citromail.hu", "admin")
+          .deletePair("jozsika88@citromail.hu")
           .then((pair) => {
             if (pair instanceof DatabaseHandler.DatabaseError) {
               done();
@@ -100,7 +80,7 @@ describe("Server", function () {
     describe("#deleteList()", function () {
       it("should delete a list", (done) => {
         dbh
-          .deleteList("t@eszter.hu", "admin", 1)
+          .deleteList("t@eszter.hu", 1)
           .then((list) => {
             if (list instanceof DatabaseHandler.DatabaseError) {
               done(new Error("This list should be deleted"));
