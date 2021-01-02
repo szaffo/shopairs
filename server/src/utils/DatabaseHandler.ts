@@ -118,73 +118,61 @@ export default class DatabaseHandler {
 
 
   async createList(email: string, name: string): Promise<List | DatabaseError> {
-    return await this.getUser(email).then((user) => {
-      if (user instanceof DatabaseError) {
-        return user
-      }
+    const user = await this.getUser(email)
+    
+    if (user instanceof DatabaseError) {
+      return user
+    }
+    
+    const pair = user.createdPair || user.joinnedToPair
 
-      const pair = user.createdPair || user.joinnedToPair
+    if (!pair) {
+      return new DatabaseError('You are not in a pair')
+    }
 
-      if (!pair) {
-        return new DatabaseError('User does not have a pair')
-      }
-
-      return this.prisma.list.create({
-        data: {
-          name,
-          belongsTo: {
-            connect: {
-              id: pair.id
-            }
+    return this.prisma.list.create({
+      data: {
+        name,
+        belongsTo: {
+          connect: {
+            id: pair.id
           }
         }
-      }).then((list) => {
-        return list
-      })
+      }
+    }).then((list) => {
+      return list
     })
-
   }
 
   async addItemToList(email: string, listId: number, itemName: string, quantity?: number): Promise<Item | DatabaseError> {
-    return await this.getUser(email).then((user) => {
-      if (user instanceof DatabaseError) {
-        return user
-      }
+    const user = await this.getUser(email)
+    
+    if (user instanceof DatabaseError) {
+      return user
+    }
 
-      const pair = user.createdPair || user.joinnedToPair
+    const pair = user.createdPair || user.joinnedToPair
 
-      if (!pair) {
-        return new DatabaseError('User does not have a pair')
-      }
+    if (!pair) { return new DatabaseError('You are not in a pair') }
 
-      return this.prisma.list.findOne({
-        where: {
-          id: listId
-        }
-      }).then((list) => {
-        if (!list) {
-          return new DatabaseError("List not found")
-        }
+    const list = await this.prisma.list.findFirst({ where: { id: listId, belongs_to: pair.id } })
+      
+    if (!list) {
+      return new DatabaseError("List not found")
+    }
 
-        if (list.belongs_to !== pair.id) {
-          return new DatabaseError('List does not belongs to the pair')
-        }
-
-        return this.prisma.item.create({
-          data: {
-            name: itemName,
-            quantity,
-            belongsTo: {
-              connect: {
-                id: list.id
-              }
-            }
+    return this.prisma.item.create({
+      data: {
+        name: itemName,
+        quantity,
+        belongsTo: {
+          connect: {
+            id: list.id
           }
-        }).then((item) => {
-          return item || new DatabaseError('Can not add item')
-        })
-      })
-
+        }
+      }
+    }).then((item) => {
+      return item || new DatabaseError('Can not add item')
     })
   }
 
@@ -227,8 +215,6 @@ export default class DatabaseHandler {
       return user;
     }
 
-
-
     const list = await this.prisma.list.findOne({ where: { id: listId } });
 
     if (list instanceof DatabaseError) {
@@ -258,7 +244,7 @@ export default class DatabaseHandler {
     const pair = user.createdPair || user.joinnedToPair
 
     if (!pair) {
-      return new DatabaseError('User does not have a pair')
+      return new DatabaseError('You are not in a pair')
     }
 
     return await this.prisma.list.update({ where: { id: listId }, data: { name: listName } }).then((list) => { return list; })
@@ -275,11 +261,11 @@ export default class DatabaseHandler {
     const pair = user.createdPair || user.joinnedToPair
 
     if (!pair) {
-      return new DatabaseError('User does not have a pair')
+      return new DatabaseError('You are not in a pair')
     }
 
     const item = await this.prisma.item.findOne({
-      where: { id: itemId},
+      where: { id: itemId },
       select: {
         belongsTo: {
           select: {
@@ -301,10 +287,56 @@ export default class DatabaseHandler {
 
     if (item.belongsTo.belongsTo.id === pair.id) {
       return this.prisma.item.delete({
-        where: { id: itemId}
+        where: { id: itemId }
       })
     } else {
-      return new DatabaseError('Forbidden')
+      return new DatabaseError('You can not delete this item')
+    }
+  }
+
+  async changeQuantity(email: string, itemId: number, quantity: number) {
+    const user = await this.getUser(email);
+
+    if (user instanceof DatabaseError) {
+      return user
+    }
+
+    const pair = user.createdPair || user.joinnedToPair
+
+    if (!pair) {
+      return new DatabaseError('You are not in a pair')
+    }
+
+    const item = await this.prisma.item.findOne({
+      where: { id: itemId },
+      select: {
+        belongsTo: {
+          select: {
+            belongsTo: {
+              select: {
+                id: true,
+                creator: true,
+                joinner: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!item) {
+      return new DatabaseError('Item not found')
+    }
+
+    if (item.belongsTo.belongsTo.id === pair.id) {
+      return this.prisma.item.update({
+        where: { id: itemId },
+        data: {
+          quantity: quantity
+        }
+      })
+    } else {
+      return new DatabaseError('You can not change this item')
     }
   }
 
