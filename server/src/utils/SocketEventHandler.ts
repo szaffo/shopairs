@@ -15,6 +15,7 @@ export default class SocketEventHandler {
       register: { function: this.dbh.registerUser, dataFilter: (data) => [data.name] }, // This should create the new user in the database with a pair
       joinToPair: { function: this.dbh.joinToPair, dataFilter: (data) => [data.partnerEmail] },
       getLists: { function: this.dbh.getLists, dataFilter: () => [] },
+      
       getUserData: { function: this.dbh.getUser, dataFilter: () => [] },
       deletePair: { function: this.dbh.deletePair, dataFilter: (data) => [] }, // we should focus on this later
       createList: { function: this.dbh.createList, dataFilter: (data) => [data.name] },
@@ -47,7 +48,7 @@ export default class SocketEventHandler {
         const request: SocketRequest = {
           rawData: data,
           event: event,
-          mappedFunction: record.function,
+          mappedFunction: record.function.bind(this.dbh),
           dataFilter: record.dataFilter,
           socket: socket,
           data: parsed_data,
@@ -86,8 +87,6 @@ export default class SocketEventHandler {
     request.userData = await validateToken(request.token)
     if (request.userData == null) {
       request.mappedFunction = () => new Error("Authentication failed")
-    } else {
-      request.mappedFunction = (Object.keys(request.data).length > 0) ? request.mappedFunction.bind(this.dbh) : () => new DatabaseError("No or badly formatted data")
     }
     
     // console.log('Data from socket:', request.data) // TODO move to logger, and remove the auth token from it
