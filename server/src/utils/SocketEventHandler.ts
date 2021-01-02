@@ -22,6 +22,7 @@ export default class SocketEventHandler {
       deleteList: { function: this.dbh.deleteList, dataFilter: (data) => [data.listId] },
       renameList: { function: this.dbh.renameList, dataFilter: (data) => [data.listId, data.listName] },
       changeQuantity: { function: this.dbh.changeQuantity, dataFilter: (data) => [data.itemId, data.quantity] }, // TODO add a test case for this
+      doneItem: { function: this.dbh.doneItem, dataFilter: (data) => [data.itemId, data.done] }, // TODO add a test case for this
     }
     this.listen()
   }
@@ -155,7 +156,8 @@ type SocketInput = {
   quantity: number,
   itemId: number,
   token?: string,
-  histId?: number
+  histId?: number,
+  done: boolean
 }
 
 type SuccessfullSocketResponse = {
@@ -180,7 +182,7 @@ type HandleMapRecord = {
   dataFilter: DataFilterType
 }
 
-type DataFilterType = (data: SocketInput) => (string | null | number)[]
+type DataFilterType = (data: SocketInput) => (string | null | number | boolean)[]
 
 type SocketEvent = 'login' | 'createNewPair'
 

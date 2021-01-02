@@ -340,6 +340,52 @@ export default class DatabaseHandler {
     }
   }
 
+  async doneItem(email: string, itemId: number, done: boolean) {
+    const user = await this.getUser(email);
+
+    if (user instanceof DatabaseError) {
+      return user
+    }
+
+    const pair = user.createdPair || user.joinnedToPair
+
+    if (!pair) {
+      return new DatabaseError('You are not in a pair')
+    }
+
+    const item = await this.prisma.item.findOne({
+      where: { id: itemId },
+      select: {
+        belongsTo: {
+          select: {
+            belongsTo: {
+              select: {
+                id: true,
+                creator: true,
+                joinner: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!item) {
+      return new DatabaseError('Item not found')
+    }
+
+    if (item.belongsTo.belongsTo.id === pair.id) {
+      return this.prisma.item.update({
+        where: { id: itemId },
+        data: {
+          done: done
+        }
+      })
+    } else {
+      return new DatabaseError('You can not change this item')
+    }
+  }
+
   disconnect(): void {
     this.prisma.$disconnect();
   }
