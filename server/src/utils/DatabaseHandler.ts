@@ -74,11 +74,7 @@ export default class DatabaseHandler {
 
   }
 
-  /**
-   * ! This method should be used only by the Database handler class.
-   * Use the getUser() method instead. That also gives back the user, and
-   * authenticates too!
-   */
+
 
   // async authenticateUser(email: string, password: string): Promise<Boolean | DatabaseError> {
     // return true
@@ -122,40 +118,31 @@ export default class DatabaseHandler {
   }
 
 
-  async joinToPair(
-    email: string,
-    connectionCode: string
-  ): Promise<Pair | DatabaseError> {
-    return await this.getUser(email).then((user) => {
-      if (user instanceof DatabaseError) {
-        return new DatabaseError(
-          "User does not exists or failed to authenticate"
-        );
-      }
+  async joinToPair(email: string, partnerEmail: string): Promise<Pair | DatabaseError> {
+    const joinner = await this.getUser(email);
+    const creator = await this.getUser(partnerEmail);
+    
+    if (joinner instanceof DatabaseError) {return new DatabaseError("User does not exists");}
+    if (creator instanceof DatabaseError) {return new DatabaseError("Partner not found");}
+    
+    if (creator.createdPair || creator.joinnedToPair) {return new DatabaseError("Partner already has a pair");}
+    if (joinner.createdPair || joinner.joinnedToPair) {return new DatabaseError("You are already in a pair");}
 
-      if (user.createdPair || user.joinnedToPair) {
-        return new DatabaseError("User already has a pair");
-      }
 
-      return this.prisma.pair
-        .update({
-          where: { connection_code: connectionCode },
-          data: {
-            connection_code: null,
-            joinner: {
-              connect: {
-                id: user.id,
-              },
-            },
-          },
-        })
-        .then((pair) => {
-          return pair || new DatabaseError("Pair not found");
-        })
-        .catch(() => {
-          return new DatabaseError("Pair not found");
-        });
-    });
+    return this.prisma.pair
+      .create({
+        data: {
+          creator: {connect: { id: creator.id}},
+          joinner: {connect: { id: joinner.id}}
+        },
+      })
+      .then((pair) => {
+        return pair || new DatabaseError("Something went wrong during creating the pair");
+      })
+      .catch(() => {
+        return new DatabaseError("Something went wrong during creating the pair");
+      });
+
   }
 
   async deletePair(email: string): Promise<Pair | DatabaseError> {

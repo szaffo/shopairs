@@ -12,10 +12,10 @@ export default class SocketEventHandler {
     // This table shows which function janldes which event. The dataFilter is a function that filters the args for the handler
     this.handleMap = {
       // createNewPair: { function: this.dbh.createNewPair, dataFilter: (data) => [data.token] }, // Pairs should already exists after register
+      register: { function: this.dbh.registerUser, dataFilter: (data) => [data.name] }, // This should create the new user in the database with a pair
+      joinToPair: { function: this.dbh.joinToPair, dataFilter: (data) => [data.partnerEmail] },
       getLists: { function: this.dbh.getLists, dataFilter: () => [] },
       getUserData: { function: this.dbh.getUser, dataFilter: () => [] },
-      register: { function: this.dbh.registerUser, dataFilter: (data) => [data.name] }, // This should create the new user in the database with a pair
-      joinToPair: { function: this.dbh.joinToPair, dataFilter: (data) => [data.connectionCode] },
       deletePair: { function: this.dbh.deletePair, dataFilter: (data) => [] }, // we should focus on this later
       createList: { function: this.dbh.createList, dataFilter: (data) => [data.name] },
       addItem: { function: this.dbh.addItemToList, dataFilter: (data) => [data.listId, data.itemName, data.quantity] },
@@ -151,7 +151,7 @@ type SocketInput = {
   email: string,
   name: string,
   listName: string,
-  connectionCode: string,
+  partnerEmail: string,
   listId: number
   itemName: string,
   quantity: number,
