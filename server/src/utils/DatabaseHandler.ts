@@ -96,25 +96,24 @@ export default class DatabaseHandler {
   }
 
   async deletePair(email: string): Promise<Pair | DatabaseError> {
-    return await this.getUser(email).then((user) => {
-      if (user instanceof DatabaseError) {
-        return user;
-      }
+    const user = await this.getUser(email)
+    
+    if (user instanceof DatabaseError) {
+      return user;
+    }
+    
+    if (!(user.joinnedToPair || user.createdPair)) {
+      return new DatabaseError("You are not in a pair");
+    }
+    const pair = user.createdPair || user.joinnedToPair || { id: 0 };
 
-      if (!(user.joinnedToPair || user.createdPair)) {
-        return new DatabaseError("User does not have a pair");
-      }
-
-      const pair = user.createdPair || user.joinnedToPair || { id: 0 };
-
-      return this.prisma.pair
-        .delete({
-          where: { id: pair.id },
-        })
-        .then((pair) => {
-          return pair;
-        });
-    });
+    return this.prisma.pair
+      .delete({
+        where: { id: pair.id },
+      })
+      .then((pair) => {
+        return pair;
+      });
   }
 
 

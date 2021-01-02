@@ -15,9 +15,9 @@ export default class SocketEventHandler {
       register: { function: this.dbh.registerUser, dataFilter: (data) => [data.name] }, // This should create the new user in the database with a pair
       joinToPair: { function: this.dbh.joinToPair, dataFilter: (data) => [data.partnerEmail] },
       getLists: { function: this.dbh.getLists, dataFilter: () => [] },
-      
       getUserData: { function: this.dbh.getUser, dataFilter: () => [] },
       deletePair: { function: this.dbh.deletePair, dataFilter: (data) => [] }, // we should focus on this later
+      
       createList: { function: this.dbh.createList, dataFilter: (data) => [data.name] },
       addItem: { function: this.dbh.addItemToList, dataFilter: (data) => [data.listId, data.itemName, data.quantity] },
       deleteList: { function: this.dbh.deleteList, dataFilter: (data) => [data.listId] },
@@ -88,7 +88,7 @@ export default class SocketEventHandler {
     if (request.userData == null) {
       request.mappedFunction = () => new Error("Authentication failed")
     }
-    
+
     // console.log('Data from socket:', request.data) // TODO move to logger, and remove the auth token from it
     const result = await this.serve(request)
     // console.log('Result after handler:', result) // TODO add to logger
