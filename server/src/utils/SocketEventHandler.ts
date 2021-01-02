@@ -21,7 +21,7 @@ export default class SocketEventHandler {
       deleteItem: { function: this.dbh.deleteItem, dataFilter: (data) => [data.itemId] },
       deleteList: { function: this.dbh.deleteList, dataFilter: (data) => [data.listId] },
       renameList: { function: this.dbh.renameList, dataFilter: (data) => [data.listId, data.listName] },
-      changeQuantity: { function: this.dbh.changeQuantity, dataFilter: (data) => [data.itemId, data.quantity] },
+      changeQuantity: { function: this.dbh.changeQuantity, dataFilter: (data) => [data.itemId, data.quantity] }, // TODO add a test case for this
     }
     this.listen()
   }
