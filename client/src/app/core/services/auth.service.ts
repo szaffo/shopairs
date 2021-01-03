@@ -1,3 +1,4 @@
+import { SocketService } from './socket-service.service';
 import { NotificationService } from './notification.service';
 import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
@@ -16,17 +17,30 @@ export class AuthService {
     private firebaseAuth: AngularFireAuth,
     private router: Router,
     private ns: NotificationService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private socketService: SocketService
     ) {
       this.user = firebaseAuth.authState;
-    }
+  }
+
+  ngOnInit() {
+    this.socketService.listen('register').subscribe((data: any) => {
+      console.log(data)
+    })
+  }
 
   signup(email: string, password: string) {
     this.cookieService.set('loginMethod', 'email')
     this.firebaseAuth
       .createUserWithEmailAndPassword(email, password)
       .then(value => {
-        this.router.navigate(['lists'])
+        console.log(value) // TODO delete line
+        this.getUserToken().subscribe((token: any) => {
+          this.socketService.emit('register', { token })
+        })
+        
+        
+        // this.router.navigate(['lists'])
       })
       .catch(err => {
         this.ns.show(this.handleErrors(err))
