@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
-import * as firebase from 'firebase';
+import * as firebase from 'firebase/app';
 import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
@@ -61,7 +61,7 @@ export class AuthService {
 
   loginGoogle() {
     this.cookieService.set('loginMethod', 'googleProvider')
-    this.loginWithProvider(new firebase.default.auth.GoogleAuthProvider())
+    this.loginWithProvider(new  firebase.default.auth.GoogleAuthProvider())
   }
 
   loginFacebook() {

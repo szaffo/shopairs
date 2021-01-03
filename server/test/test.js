@@ -1,8 +1,12 @@
 const DatabaseHandler = require("../dist/utils/DatabaseHandler");
-let dbh = new DatabaseHandler.default();
+let dbh;
 
 describe("Server", function () {
   describe("DatabaseHandler", function () {
+    before(function () {
+      dbh = new DatabaseHandler.default((log = false));
+    });
+
     after(function () {
       dbh.disconnect();
     });
@@ -10,7 +14,7 @@ describe("Server", function () {
     describe("#getUser()", function (done) {
       it("should give back an user", (done) => {
         dbh
-          .getUser("t@eszter.hu", "admin")
+          .getUser("t@eszter.hu")
           .then((user) => {
             if (user instanceof DatabaseHandler.DatabaseError) {
               done(user);
@@ -25,7 +29,7 @@ describe("Server", function () {
 
       it("should not give back an user", (done) => {
         dbh
-          .getUser("wrong@eszter.hu", "admin")
+          .getUser("wrong@eszter.hu")
           .then((user) => {
             if (user instanceof DatabaseHandler.DatabaseError) {
               done();
@@ -39,27 +43,10 @@ describe("Server", function () {
       });
     });
 
-    describe("#createNewPair()", function () {
-      it("should not create a pair", (done) => {
-        dbh
-          .createNewPair("t@eszter.hu", "admin")
-          .then((pair) => {
-            if (pair instanceof DatabaseHandler.DatabaseError) {
-              done();
-            } else {
-              done(new Error(pair.message));
-            }
-          })
-          .catch((error) => {
-            done(error);
-          });
-      });
-    });
-
     describe("#joinToPair()", function () {
       it("should not join to a pair", (done) => {
         dbh
-          .joinToPair("jozsika88@citromail.hu", "admin", "TEST_PAIR")
+          .joinToPair("jozsika88@citromail.hu", "mpisti@mail.hu")
           .then((pair) => {
             if (pair instanceof DatabaseHandler.DatabaseError) {
               done();
@@ -76,7 +63,7 @@ describe("Server", function () {
     describe("#deletePair()", function () {
       it("should not delete a pair", (done) => {
         dbh
-          .deletePair("jozsika88@citromail.hu", "admin")
+          .deletePair("jozsika88@citromail.hu")
           .then((pair) => {
             if (pair instanceof DatabaseHandler.DatabaseError) {
               done();
@@ -93,7 +80,7 @@ describe("Server", function () {
     describe("#deleteList()", function () {
       it("should delete a list", (done) => {
         dbh
-          .deleteList("t@eszter.hu", "admin", 1)
+          .deleteList("t@eszter.hu", 1)
           .then((list) => {
             if (list instanceof DatabaseHandler.DatabaseError) {
               done(new Error("This list should be deleted"));

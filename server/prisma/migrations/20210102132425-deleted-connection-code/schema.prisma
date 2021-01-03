@@ -3,7 +3,7 @@
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 generator client {
@@ -49,5 +49,4 @@ model Item {
   belongsTo List @relation("BelongsToList", fields: [belongs_to], references: [id])
   updated_at DateTime @updatedAt
   created_at DateTime @default(now())
-  done Boolean @default(false)
 }
