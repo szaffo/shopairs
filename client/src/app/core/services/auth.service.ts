@@ -28,6 +28,7 @@ export class AuthService {
           this.router.navigate(['lists'])
         } else {
           this.ns.showSocketError(data)
+          this.cookieService.delete('loginMethod')
         }
       })
   }
@@ -44,6 +45,7 @@ export class AuthService {
       })
       .catch(err => {
         this.ns.show(this.handleErrors(err))
+        this.cookieService.delete('loginMethod')
         console.log('Something went wrong:', err.message);
       });
   }
