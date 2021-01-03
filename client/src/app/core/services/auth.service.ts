@@ -134,6 +134,8 @@ export class AuthService {
     else if (error.code === 'auth/email-already-exists') { return 'This email is already used' }
     else if (error.code === 'auth/wrong-password') { return 'The email or password is invalid or you don\'t have a password. Try other sign in methods' }
     else if (error.code === 'auth/account-exists-with-different-credential') { return 'Your account registered with a different sign in method' }
+    else if (error.code === 'auth/email-already-in-use') { return 'Email address already in use' }
+    else if (error.code === 'auth/weak-password') { return 'Password should be at least 6 characters' }
     else return 'Something went wrong' 
   }
 
