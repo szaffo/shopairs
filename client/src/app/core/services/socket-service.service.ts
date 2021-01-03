@@ -7,8 +7,9 @@ export class SocketService {
 
   constructor(private socket: Socket) { }
 
-  emit(event: string, data: any) {
-    this.socket.emit(event, data)
+  send(event: string, data: any) {
+    console.log(data)
+    this.socket.emit(event, JSON.stringify(data))
   }
 
   listen(event: string) {

@@ -1,7 +1,7 @@
 import { SocketService } from './socket-service.service';
 import { NotificationService } from './notification.service';
 import { Router } from '@angular/router';
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import * as firebase from 'firebase/app';
@@ -21,26 +21,26 @@ export class AuthService {
     private socketService: SocketService
     ) {
       this.user = firebaseAuth.authState;
-  }
-
-  ngOnInit() {
-    this.socketService.listen('register').subscribe((data: any) => {
-      console.log(data)
-    })
+      
+      this.socketService.listen('register').subscribe((data: any) => {
+        if (data == null) {console.log("NULLNLUNL")} // TODO delete line
+        if (data.success) {
+          this.router.navigate(['lists'])
+        } else {
+          this.ns.showSocketError(data)
+        }
+      })
   }
 
   signup(email: string, password: string) {
     this.cookieService.set('loginMethod', 'email')
     this.firebaseAuth
       .createUserWithEmailAndPassword(email, password)
-      .then(value => {
-        console.log(value) // TODO delete line
+      .then(value => { // TODO maybe the value contains the token
         this.getUserToken().subscribe((token: any) => {
-          this.socketService.emit('register', { token })
+          const data = { token }
+          this.socketService.send('register', data)
         })
-        
-        
-        // this.router.navigate(['lists'])
       })
       .catch(err => {
         this.ns.show(this.handleErrors(err))
@@ -113,7 +113,7 @@ export class AuthService {
 
   checkLogin(): void {
     this.user.subscribe((user:any) => {
-      console.log(user)
+      console.log(user) // TODO delete console log
       if (user) {
         console.debug('User logged in')
         this.router.navigate(['lists'])

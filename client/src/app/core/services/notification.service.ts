@@ -18,4 +18,9 @@ export class NotificationService {
     this.snackBar.open(message, action, config);
   }
 
+  public showSocketError(data: any) {
+    console.log(data);
+    (data.origin == 'DatabaseHandler')? this.show(data.error) : this.show("Something went wrong :(")
+  }
+
 }
