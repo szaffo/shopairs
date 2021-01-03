@@ -2,3 +2,5 @@ node_modules/
 dist/
 *.db
 .vscode
+shopairs*admin*.json
+.env

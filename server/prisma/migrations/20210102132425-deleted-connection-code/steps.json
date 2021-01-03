@@ -1,0 +1,22 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "DeleteField",
+      "model": "Pair",
+      "field": "connection_code"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Pair",
+      "field": "pair2_id",
+      "arity": "Required"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Pair",
+      "field": "joinner",
+      "arity": "Required"
+    }
+  ]
+}

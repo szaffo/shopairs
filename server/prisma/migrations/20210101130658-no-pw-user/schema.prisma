@@ -3,7 +3,7 @@
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 generator client {
@@ -23,9 +23,10 @@ model User {
 model Pair {
   id Int @default(autoincrement()) @id
   pair1_id Int
-  pair2_id Int
+  pair2_id Int?
   creator User @relation("CreatorUser", fields: [pair1_id], references: [id])
-  joinner User @relation("JoinnerUser", fields: [pair2_id], references: [id])
+  joinner User? @relation("JoinnerUser", fields: [pair2_id], references: [id])
+  connection_code String? @unique
   updated_at DateTime @updatedAt
   created_at DateTime @default(now())
   lists List[] @relation("BelongsToPair")
@@ -49,5 +50,4 @@ model Item {
   belongsTo List @relation("BelongsToList", fields: [belongs_to], references: [id])
   updated_at DateTime @updatedAt
   created_at DateTime @default(now())
-  done Boolean @default(false)
 }
