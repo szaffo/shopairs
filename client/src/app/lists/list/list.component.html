@@ -13,7 +13,7 @@
                     <button mat-icon-button aria-label="Delete list" (click)="deleteList($event)">
                         <mat-icon>delete</mat-icon>
                     </button>
-                    <button mat-icon-button aria-label="Edit list" (click)="renameList($event)">
+                    <button mat-icon-button aria-label="Edit list" (click)="renameList($event, data.id)">
                         <mat-icon>edit</mat-icon>
                     </button>
                 </ng-template>
@@ -31,7 +31,7 @@
         </mat-checkbox>
         <ul>
             <li *ngFor="let item of data.items">
-                <app-item [data]="item" (delete)="this.itemDelete($event)" (change)="this.itemCheck()"></app-item>
+                <app-item [data]="item" (delete)="this.itemDelete($event, item.id)" (change)="this.itemCheck()"></app-item>
             </li>
         </ul>
 

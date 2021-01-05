@@ -54,9 +54,14 @@ export class ListComponent implements OnInit {
     this.change.emit()
   }
 
-  itemDelete(name: string): void {
+  itemDelete(name: string, itemId: number): void {
     this.data.items = this.data.items.filter((item: any) => item.name !== name)
     this.change.emit()
+
+    this.socketService.send("deleteItem", {
+      token: this.token,
+      itemId
+    })
   }
 
   itemAdd(listId: number): void {
@@ -104,7 +109,7 @@ export class ListComponent implements OnInit {
     this.delete.emit(this.data.name)
   }
 
-  renameList(e: any): void {
+  renameList(e: any, listId: number): void {
     e.stopPropagation()
 
     const dialogRef = this.dialog.open(RenameListDialog, {
@@ -129,6 +134,12 @@ export class ListComponent implements OnInit {
       if (newName.length > 0 && newName !== this.data.name) {
         this.data.name = newName
         this.change.emit()
+
+        this.socketService.send("renameList", {
+          token: this.token,
+          listId,
+          listName: newName
+        })
       }
     });
   }
