@@ -1,6 +1,5 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { SocketService } from '../../../core/services/socket-service.service';
-import { AuthService } from '../../../core/services/auth.service'
+import { NotificationService } from './../../../core/services/notification.service';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-item',
@@ -9,61 +8,47 @@ import { AuthService } from '../../../core/services/auth.service'
 })
 export class ItemComponent implements OnInit {
 
-  token: string = ''
+  public name: string = ''
+  public quantity: number = 1
+  public checked: boolean = false
 
   @Input() data: any;
-  @Output() change = new EventEmitter<string>();
-  @Output() delete = new EventEmitter<string>();
 
-  constructor(
-    private authService: AuthService,
-    private socketService: SocketService
-  ) {
-
-  }
+  constructor(private ns: NotificationService) {}
 
   ngOnInit(): void {
-    this.data.quantity = this.data.quantity || 1
-
-    this.authService.getUserToken().subscribe((data: any) => {
-      this.token = data
-      console.debug(data)
-    })
+    this.quantity = this.data.data().quantity
+    this.name = this.data.data().name
+    this.checked = this.data.data().checked || false
   }
 
-  check(itemId: number): void {
-    this.data.checked = !this.data.checked
-    this.change.emit(this.data.name)
-
-    this.socketService.send("doneItem", {
-      token: this.token,
-      itemId,
-      done: this.data.checked
-    })
+  check(): void {
+    this.checked = !this.checked
+    this.save()
   }
 
-  _delete(): void {
-    this.delete.emit(this.data.name)
+  delete(): void {
+    this.data.ref.delete().then(() => {
+      this.ns.show('Item deleted')
+    })
   }
 
   incQuantity(itemId: number): void {
-    this.data.quantity += 1
-
-    this.socketService.send("changeQuantity", {
-      token: this.token,
-      itemId,
-      quantity: this.data.quantity
-    });
+    this.quantity += 1
+    this.save()
   }
 
   decQuantity(itemId: number): void {
-    this.data.quantity = Math.max(1, this.data.quantity - 1)
+    this.quantity = Math.max(1, this.data.data().quantity - 1)
+    this.save()
+  }
 
-    this.socketService.send("changeQuantity", {
-      token: this.token,
-      itemId,
-      quantity: this.data.quantity
-    });
+  save() {
+    this.data.ref.update({
+      name: this.name,
+      quantity: this.quantity,
+      checked: this.checked
+    })
   }
 
 }

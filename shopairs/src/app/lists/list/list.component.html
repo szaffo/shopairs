@@ -1,7 +1,7 @@
 <mat-expansion-panel [expanded]="this.open" (opened)="open=true" (closed)="open=false">
     <mat-expansion-panel-header>
         <mat-panel-title>
-            {{data.name}}
+            {{data.data().name}}
         </mat-panel-title>
         <mat-panel-description>
             <span class="count-display">
@@ -30,8 +30,8 @@
             All done
         </mat-checkbox>
         <ul>
-            <li *ngFor="let item of data.items">
-                <app-item [data]="item" (delete)="this.itemDelete($event, item.id)" (change)="this.itemCheck()"></app-item>
+            <li *ngFor="let item of items">
+                <app-item [data]="item"></app-item>
             </li>
         </ul>
 
@@ -39,8 +39,8 @@
 
     <mat-form-field class="addItemInput">
         <mat-label>Add item to your list</mat-label>
-        <input matInput type="text" [(ngModel)]="inputValue" (keydown.enter)="itemAdd(data.id)">
-        <button mat-button *ngIf="inputValue" matSuffix mat-icon-button aria-label="Add" (click)="itemAdd(data.id)">
+        <input matInput type="text" [(ngModel)]="inputValue" (keydown.enter)="itemAdd()">
+        <button mat-button *ngIf="inputValue" matSuffix mat-icon-button aria-label="Add" (click)="itemAdd()">
             <mat-icon>add</mat-icon>
         </button>
     </mat-form-field>

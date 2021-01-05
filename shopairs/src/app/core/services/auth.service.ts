@@ -1,11 +1,12 @@
-import { SocketService } from './socket-service.service';
+import 'firebase/firestore';
 import { NotificationService } from './notification.service';
 import { Router } from '@angular/router';
 import { Injectable, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import * as firebase from 'firebase/app';
 import { CookieService } from 'ngx-cookie-service';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -15,40 +16,63 @@ export class AuthService {
 
   constructor(
     private firebaseAuth: AngularFireAuth,
+    private firestore: AngularFirestore,
     private router: Router,
     private ns: NotificationService,
     private cookieService: CookieService,
-    private socketService: SocketService
     ) {
       this.user = firebaseAuth.authState;
-      
-      this.socketService.listen('register').subscribe((data: any) => {
-        if (data == null) {console.log("NULLNLUNL")} // TODO delete line
-        if (data.success) {
-          this.router.navigate(['lists'])
+
+      this.user.subscribe((user: any) => {
+        if (user === null) {
+          this.cookieService.set('commonId', '')
         } else {
-          this.ns.showSocketError(data)
-          this.cookieService.delete('loginMethod')
+          this.firestore.collection('users').doc(user.uid).get().subscribe((doc: firebase.default.firestore.DocumentSnapshot<any>) => {
+            const commonId = doc.data().commonId
+            this.cookieService.set('commonId', commonId)
+            if (this.router.url === '/register' || this.router.url === '/login') { this.router.navigate(['lists']) }
+          })
         }
       })
   }
 
+  setUsername(displayName: any) {
+    this.firebaseAuth.currentUser.then((user) => {
+      if (user != null) {
+        user.updateProfile({
+          displayName : displayName
+        }).then(() => {
+          this.ns.show('Settings are saved');
+        }).catch((err) => {
+          console.log(err)
+        })
+      }
+    })
+  }
+
   signup(email: string, password: string) {
     this.cookieService.set('loginMethod', 'email')
+    
     this.firebaseAuth
       .createUserWithEmailAndPassword(email, password)
-      .then(value => { // TODO maybe the value contains the token
-        this.getUserToken().subscribe((token: any) => {
-          const data = { token }
-          console.log(data)
-          this.socketService.send('register', data)
+        .then(userCredential => {
+          if (userCredential.user !== null) {
+            this.firestore.collection("users").doc(userCredential.user.uid).set({
+              uid: userCredential.user.uid,
+              commonId: '',
+              created: firebase.default.firestore.FieldValue.serverTimestamp(),
+              email: userCredential.user.email
+            }).then(() => {
+              this.cookieService.delete('loginMethod')
+              this.router.navigate(['/lists'])
+            })
+          }
         })
-      })
-      .catch(err => {
-        this.ns.show(this.handleErrors(err))
-        this.cookieService.delete('loginMethod')
-        console.log('Something went wrong:', err.message);
-      });
+        .catch(err => {
+          this.ns.show(this.handleErrors(err))
+          this.cookieService.delete('loginMethod')
+          console.log('Something went wrong:', err.message);
+        });
   }
 
   login(email: string, password: string) {
@@ -56,7 +80,7 @@ export class AuthService {
     this.firebaseAuth
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        this.router.navigate(['lists'])
+        // this.router.navigate(['lists'])
       })
       .catch(err => {
         this.ns.show(this.handleErrors(err))
@@ -67,6 +91,7 @@ export class AuthService {
 
   logout() {
     this.cookieService.delete('loginMethod')
+    this.cookieService.set('commonId', '')
     this.firebaseAuth.signOut()
       .then(() => {
         this.router.navigate(['/'])
@@ -116,12 +141,12 @@ export class AuthService {
 
   checkLogin(): void {
     this.user.subscribe((user:any) => {
-      console.log(user) // TODO delete console log
       if (user) {
         console.debug('User logged in')
         this.router.navigate(['lists'])
       } else {
         this.cookieService.delete('loginMethod')
+        this.cookieService.set('commonId', '')
       }
     })
           
@@ -140,11 +165,11 @@ export class AuthService {
     else return 'Something went wrong' 
   }
 
-  getUserToken(): any {
+  getUserToken(): Observable<string | null> {
     return this.firebaseAuth.idToken
   }
 
-  getUser(): any {
+  getUser(): Observable<firebase.default.User | null> {
     return this.firebaseAuth.user
   }
 

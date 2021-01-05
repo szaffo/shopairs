@@ -1,9 +1,9 @@
+import { AngularFirestore } from '@angular/fire/firestore';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Input, OnInit, Output, EventEmitter, Inject } from '@angular/core';
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
-import { SocketService } from '../../core/services/socket-service.service';
-import { AuthService } from '../../core/services/auth.service';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-list',
@@ -13,85 +13,72 @@ import { AuthService } from '../../core/services/auth.service';
 export class ListComponent implements OnInit {
 
   @Input() data: any = {}
-  @Output() change = new EventEmitter()
-  @Output() delete = new EventEmitter<string>()
+  @Input() index: number = -1
+  @Output() delete = new EventEmitter<any>()
   open = false;
   inputValue = ''
   inputError = false
   isExtraSmall: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.XSmall);
   token: string = ''
+  items: any = []
 
   constructor
     (
       private breakpointObserver: BreakpointObserver,
       public dialog: MatDialog,
-      private socketService: SocketService,
-      private authService: AuthService
+      private firestore: AngularFirestore
     ) {
-    this.authService.getUserToken().subscribe((data: any) => {
-      this.token = data
-      console.debug(data)
-    })
   }
 
   ngOnInit(): void {
-    this.open = this.data.open || false
+    this.open =  (this.index === 0)? true : this.data.open || false
+
+    this.firestore.collection('items').ref.where('listId', "==", this.data.id).orderBy('created', 'desc').onSnapshot({
+      next: (data) => {
+        this.items = []
+        data.docs.forEach((item) => {
+          this.items.push(item)
+        });
+      }
+    })
   }
 
   countChecked(): number {
-    return this.data.items.filter((item: any) => item.checked).length
+    return this.items.filter((item: any) => item.data().checked).length
   }
 
   countAll(): number {
-    return this.data.items.length
+    return this.items.length
   }
 
   isDone(): boolean {
     return this.countAll() === this.countChecked()
   }
 
-  itemCheck(): void {
-    this.change.emit()
-  }
-
-  itemDelete(name: string, itemId: number): void {
-    this.data.items = this.data.items.filter((item: any) => item.name !== name)
-    this.change.emit()
-
-    this.socketService.send("deleteItem", {
-      token: this.token,
-      itemId
-    })
-  }
-
-  itemAdd(listId: number): void {
+  itemAdd(): void {
     if (this.inputValue.trim().length <= 0) { this.inputValue = ''; return }
+    
     let found = false
-    this.data.items.forEach((item: any) => {
-      if (item.name.toLowerCase() === this.inputValue.toLowerCase()) {
-        item.quantity = item.quantity || 0
-        item.quantity += 1
+    this.items.forEach((item: any) => {
+      if (item.data().name.toLowerCase() === this.inputValue.toLowerCase()) {
+        item.ref.update({
+          quantity: item.data().quantity + 1
+        })
         found = true
       }
     });
 
     if (!found) {
-      this.data.items.push({
+      this.firestore.collection('items').add({
         name: this.inputValue,
         quantity: 1,
-        checked: false
-      })
-
-      this.socketService.send("addItem", {
-        token: this.token,
-        itemName: this.inputValue,
-        quantity: 1,
-        listId
+        chechked: false,
+        listId: this.data.id,
+        created: firebase.default.firestore.FieldValue.serverTimestamp(),
       })
     }
 
     this.inputValue = ''
-    this.change.emit()
   }
 
   someDone(): boolean {
@@ -99,21 +86,23 @@ export class ListComponent implements OnInit {
   }
 
   setAll(to: boolean): void {
-    this.data.items.forEach((item: any) => {
-      item.checked = to;
+    this.items.forEach((item: any) => {
+      item.ref.update({
+        checked: to
+      })
     });
   }
 
   deleteList(e: any): void {
     e.stopPropagation()
-    this.delete.emit(this.data.name)
+    this.delete.emit(this.data)
   }
 
   renameList(e: any, listId: number): void {
     e.stopPropagation()
 
     const dialogRef = this.dialog.open(RenameListDialog, {
-      data: { name: this.data.name },
+      data: { name: this.data.data().name },
       width: '50%',
       height: '50%',
       maxWidth: '100vw',
@@ -132,13 +121,8 @@ export class ListComponent implements OnInit {
       smallDialogSubscription.unsubscribe();
       const newName = result.trim()
       if (newName.length > 0 && newName !== this.data.name) {
-        this.data.name = newName
-        this.change.emit()
-
-        this.socketService.send("renameList", {
-          token: this.token,
-          listId,
-          listName: newName
+        this.data.ref.update({
+          name: newName
         })
       }
     });

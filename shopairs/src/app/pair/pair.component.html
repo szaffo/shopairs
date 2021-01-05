@@ -7,14 +7,15 @@
     <mat-card-content>
         <mat-form-field appearance="outline">
             <mat-label>Enter your partner's email</mat-label>
-            <input [(ngModel)]="partnerEmail" matInput>
+            <input *ngIf="!single" matTooltip="You can not edit this" readonly [(ngModel)]="partnerEmail" matInput>
+            <input *ngIf="single"  [(ngModel)]="partnerEmail" matInput>
         </mat-form-field>
         <br>
         <div *ngIf="single">
-            <button mat-raised-button color='accent' (click)="joinToPair()">Pair!</button>
+            <button mat-raised-button color='accent' (click)="joinToPair()">Pair</button>
         </div>
         <div *ngIf="!single">
-            <button mat-raised-button color='accent'>Delete Pair!</button>
+            <button mat-raised-button color='warn'>Delete Pair</button>
         </div>
     </mat-card-content>
 </mat-card>

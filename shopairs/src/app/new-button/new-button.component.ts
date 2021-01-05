@@ -1,3 +1,5 @@
+import { NotificationService } from './../core/services/notification.service';
+import { CookieService } from 'ngx-cookie-service';
 import { EventEmitter } from '@angular/core';
 import { Component , Output } from '@angular/core';
 import { MatDialog, MatDialogRef} from '@angular/material/dialog';
@@ -14,9 +16,13 @@ export class NewButtonComponent {
   @Output() result = new EventEmitter<string>()
   isExtraSmall: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.XSmall);
 
-  constructor(private breakpointObserver: BreakpointObserver, public dialog: MatDialog) { }
+  constructor(private breakpointObserver: BreakpointObserver, public dialog: MatDialog, private cs: CookieService, private ns: NotificationService) { }
 
   openDialog() {
+    if (this.cs.get('commonId') == '') {
+      this.ns.show("You have to pair with somebody to create a list")
+      return
+    }
     const dialogRef = this.dialog.open(CreateListDialog, {
       width: '50%',
       height: '50%',

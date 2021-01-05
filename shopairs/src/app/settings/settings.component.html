@@ -8,17 +8,17 @@
         <div class='aligner' fxLayout="column" fxLayoutAlign="space-evenly start">
             <mat-form-field appearance="outline">
                 <mat-label>Your name</mat-label>
-                <input matInput value="Joe Jack">
+                <input matInput [(ngModel)]="this.user.displayName">
             </mat-form-field>
 
             <mat-form-field appearance="outline">
                 <mat-label>Your email</mat-label>
-                <input readonly matInput value="joe.jack@gmail.com">
+                <input readonly matInput [value]="this.user.email">
             </mat-form-field>
 
             <mat-form-field appearance="outline">
                 <mat-label>Enter your password</mat-label>
-                <input matInput [type]="hide ? 'password' : 'text'">
+                <input readonly matTooltip="Not implemented yet" matInput [type]="hide ? 'password' : 'text'">
                 <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                     <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
@@ -26,7 +26,7 @@
 
             <mat-form-field appearance="outline">
                 <mat-label>Enter your password again</mat-label>
-                <input matInput [type]="hide ? 'password' : 'text'">
+                <input readonly matTooltip="Not implemented yet" matInput [type]="hide ? 'password' : 'text'">
                 <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
                     [attr.aria-pressed]="hide">
                     <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
@@ -42,9 +42,9 @@
     </mat-card-actions>
 </mat-card>
 
-<mat-card style="width: 60vw; margin:50px 0; word-break: break-all;"> 
+<!-- <mat-card style="width: 60vw; margin:50px 0; word-break: break-all;"> 
     <mat-card-title>
         User JWT
     </mat-card-title>
     <textarea>{{ this.token }}</textarea>
-</mat-card>
+</mat-card> -->

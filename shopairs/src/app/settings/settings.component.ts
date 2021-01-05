@@ -1,7 +1,7 @@
+import { AngularFireAuth } from '@angular/fire/auth';
 import { AuthService } from './../core/services/auth.service';
 import { NotificationService } from '../core/services/notification.service';
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-settings',
@@ -9,21 +9,27 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
-  token = ''
+  hide = true;
+  user: any = {
+    displayName: '',
+    email: ''
+  }
 
-  constructor(private ns: NotificationService, private auth: AuthService) {
-    this.auth.getUserToken().subscribe((_token: any) => {
-      this.token = _token
-    })
+  constructor(private ns: NotificationService, private authService: AuthService, private afu: AngularFireAuth) {
+    
   }
 
   ngOnInit(): void {
+    this.authService.getUser().subscribe((user) => {
+      if (user) {
+        this.user.displayName = user.displayName
+        this.user.email = user.email
+      }
+    })
   }
-  hide = true;
 
   openSnackBar() {
-    this.ns.show('Settings are saved', 'Close', {
-      duration: 1500,
-    });
+    console.log(this.user.displayName)
+    this.authService.setUsername(this.user.displayName)
   }
 }

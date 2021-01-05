@@ -1,11 +1,11 @@
-import { SocketService } from './core/services/socket-service.service';
 import { AuthService } from './core/services/auth.service';
 import { NgModule } from '@angular/core';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { AngularFireMessagingModule } from '@angular/fire/messaging';
-import { AngularFireStorageModule } from '@angular/fire/storage';
+// import { AngularFireMessagingModule } from '@angular/fire/messaging';
+// import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -44,9 +44,6 @@ import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
 import { LandingComponent } from './landing/landing.component';
 
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
-const socketConfig: SocketIoConfig = { url: 'https://shopairs.herokuapp.com/', options: {} };
-
 import * as Hammer from 'hammerjs';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 export class MyHammerConfig extends HammerGestureConfig {
@@ -82,10 +79,10 @@ export class MyHammerConfig extends HammerGestureConfig {
 	imports: [
 		BrowserModule,
 		AngularFireModule.initializeApp(environment.firebase),
-		SocketIoModule.forRoot(socketConfig),
 		AngularFireAuthModule,
-		AngularFireMessagingModule,
-		AngularFireStorageModule,
+		AngularFirestoreModule,
+		// AngularFireMessagingModule,
+		// AngularFireStorageModule,
 		BrowserAnimationsModule,
 		FormsModule,
 		ReactiveFormsModule,
@@ -112,12 +109,11 @@ export class MyHammerConfig extends HammerGestureConfig {
 	],
 	providers: [
 		AuthService,
-		{
+			{
 			provide: HAMMER_GESTURE_CONFIG,
 			useClass: MyHammerConfig,
 		},
-		CookieService,
-		SocketService
+		CookieService
 	],
 	bootstrap: [AppComponent]
 })
