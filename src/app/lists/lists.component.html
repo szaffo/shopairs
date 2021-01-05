@@ -1,0 +1,11 @@
+<div style="margin-bottom: 340px">
+  <mat-accordion>
+    
+    <app-list *ngFor="let list of lists; index as i" [data]="list" [index]="i" (delete)="this.deleteList($event)"></app-list>
+    <div *ngIf="lists.length <=0">
+      <h2 style="color: grey;">Looks like you don't have any shopping lists</h2>
+    </div>
+    
+  </mat-accordion>
+  <app-new-button (result)="createList($event)" ></app-new-button>
+</div>
