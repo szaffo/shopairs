@@ -1,3 +1,4 @@
+import { SocketService } from './core/services/socket-service.service';
 import { AuthService } from './core/services/auth.service';
 import { NgModule } from '@angular/core';
 
@@ -43,6 +44,9 @@ import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
 import { LandingComponent } from './landing/landing.component';
 
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+const socketConfig: SocketIoConfig = { url: 'localhost:5000', options: {} };
+
 import * as Hammer from 'hammerjs';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 export class MyHammerConfig extends HammerGestureConfig {
@@ -64,11 +68,11 @@ export class MyHammerConfig extends HammerGestureConfig {
 		AppComponent,
 		MenuComponent,
 		ListsComponent,
-			CreateListDialog,
-			AskDelDialog,	
-			ListComponent,
-				RenameListDialog,
-				ItemComponent,
+		CreateListDialog,
+		AskDelDialog,	
+		ListComponent,
+		RenameListDialog,
+		ItemComponent,
 		NewButtonComponent,
 		SettingsComponent,
 		PairComponent,
@@ -78,6 +82,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 	imports: [
 		BrowserModule,
 		AngularFireModule.initializeApp(environment.firebase),
+		SocketIoModule.forRoot(socketConfig),
 		AngularFireAuthModule,
 		AngularFireMessagingModule,
 		AngularFireStorageModule,
@@ -111,7 +116,8 @@ export class MyHammerConfig extends HammerGestureConfig {
 			provide: HAMMER_GESTURE_CONFIG,
 			useClass: MyHammerConfig,
 		},
-		CookieService
+		CookieService,
+		SocketService
 	],
 	bootstrap: [AppComponent]
 })
