@@ -30,7 +30,9 @@ export class ListsComponent {
       this.socketService.send("getLists", { token: this.token })
     })
     this.socketService.listen("getLists").subscribe((data): any => {
-      this.lists = data.data
+      if(data.data.length !== 0) {
+        this.lists = data.data
+      }
       console.debug(data)
     })
   }
