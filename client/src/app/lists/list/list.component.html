@@ -13,9 +13,9 @@
                     <button mat-icon-button aria-label="Delete list" (click)="deleteList($event)">
                         <mat-icon>delete</mat-icon>
                     </button>
-                    <button mat-icon-button aria-label="Edit list" (click)="renameList($event)"> 
+                    <button mat-icon-button aria-label="Edit list" (click)="renameList($event)">
                         <mat-icon>edit</mat-icon>
-                    </button> 
+                    </button>
                 </ng-template>
                 <ng-template #elseBlock>
                     <mat-icon *ngIf="!this.isDone()">timelapse</mat-icon>
@@ -25,21 +25,22 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
     <div>
-        <mat-checkbox [checked]="isDone()" [indeterminate]="someDone()" (change)="setAll($event.checked)" color="primary">
-        All done
+        <mat-checkbox [checked]="isDone()" [indeterminate]="someDone()" (change)="setAll($event.checked)"
+            color="primary">
+            All done
         </mat-checkbox>
         <ul>
             <li *ngFor="let item of data.items">
                 <app-item [data]="item" (delete)="this.itemDelete($event)" (change)="this.itemCheck()"></app-item>
             </li>
         </ul>
-        
+
     </div>
 
     <mat-form-field class="addItemInput">
         <mat-label>Add item to your list</mat-label>
-        <input matInput type="text" [(ngModel)]="inputValue" (keydown.enter)="itemAdd()">
-        <button mat-button *ngIf="inputValue" matSuffix mat-icon-button aria-label="Add" (click)="itemAdd()">
+        <input matInput type="text" [(ngModel)]="inputValue" (keydown.enter)="itemAdd(data.id)">
+        <button mat-button *ngIf="inputValue" matSuffix mat-icon-button aria-label="Add" (click)="itemAdd(data.id)">
             <mat-icon>add</mat-icon>
         </button>
     </mat-form-field>

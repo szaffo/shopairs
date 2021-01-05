@@ -2,6 +2,8 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { Component, Input, OnInit, Output, EventEmitter, Inject } from '@angular/core';
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
+import { SocketService } from '../../core/services/socket-service.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-list',
@@ -17,9 +19,20 @@ export class ListComponent implements OnInit {
   inputValue = ''
   inputError = false
   isExtraSmall: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.XSmall);
+  token: string = ''
 
-
-  constructor(private breakpointObserver: BreakpointObserver, public dialog: MatDialog) {}
+  constructor
+    (
+      private breakpointObserver: BreakpointObserver,
+      public dialog: MatDialog,
+      private socketService: SocketService,
+      private authService: AuthService
+    ) {
+    this.authService.getUserToken().subscribe((data: any) => {
+      this.token = data
+      console.debug(data)
+    })
+  }
 
   ngOnInit(): void {
     this.open = this.data.open || false
@@ -42,12 +55,12 @@ export class ListComponent implements OnInit {
   }
 
   itemDelete(name: string): void {
-    this.data.items = this.data.items.filter((item: any)=> item.name !== name)
+    this.data.items = this.data.items.filter((item: any) => item.name !== name)
     this.change.emit()
   }
 
-  itemAdd(): void {
-    if (this.inputValue.trim().length <= 0) { this.inputValue = ''; return}
+  itemAdd(listId: number): void {
+    if (this.inputValue.trim().length <= 0) { this.inputValue = ''; return }
     let found = false
     this.data.items.forEach((item: any) => {
       if (item.name.toLowerCase() === this.inputValue.toLowerCase()) {
@@ -62,6 +75,13 @@ export class ListComponent implements OnInit {
         name: this.inputValue,
         quantity: 1,
         checked: false
+      })
+
+      this.socketService.send("addItem", {
+        token: this.token,
+        itemName: this.inputValue,
+        quantity: 1,
+        listId
       })
     }
 
@@ -88,7 +108,7 @@ export class ListComponent implements OnInit {
     e.stopPropagation()
 
     const dialogRef = this.dialog.open(RenameListDialog, {
-      data: {name: this.data.name},
+      data: { name: this.data.name },
       width: '50%',
       height: '50%',
       maxWidth: '100vw',
@@ -118,7 +138,7 @@ export class ListComponent implements OnInit {
   templateUrl: './rename-list-dialog.component.html',
   styleUrls: ['./list.component.scss']
 })
-export class RenameListDialog { 
+export class RenameListDialog {
   inputValue = ''
 
   constructor(
