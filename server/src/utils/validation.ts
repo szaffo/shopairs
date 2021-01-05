@@ -1,7 +1,8 @@
 import * as admin from 'firebase-admin';
 
-admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
+const credential = process.env["FB_CONFIG_BASE64"] || '';
+admin.initializeApp({  
+    credential: admin.credential.cert( JSON.parse( Buffer.from(credential, 'base64').toString('ascii') ) ),
     databaseURL: "https://shopairs.firebaseio.com"
 });
 
