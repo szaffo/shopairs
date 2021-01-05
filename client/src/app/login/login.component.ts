@@ -27,7 +27,7 @@ export class LoginComponent {
   ngOnInit(): void {
     if (this.cookiService.check('loginMethod')) {
       if (this.cookiService.get('loginMethod') === 'email') {
-        this.authService.checkLogin()
+        // this.authService.checkLogin() // TODO commented for testing something
       } else {
         this.authService.checkRedirect()
       }

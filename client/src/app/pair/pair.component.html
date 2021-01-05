@@ -6,10 +6,15 @@
 
     <mat-card-content>
         <mat-form-field appearance="outline">
-            <mat-label>Enter a pair id</mat-label>
-            <input  matInput>
+            <mat-label>Enter your partner's email</mat-label>
+            <input [(ngModel)]="partnerEmail" matInput>
         </mat-form-field>
         <br>
-        <button mat-raised-button color='accent'>Pair!</button>
+        <div *ngIf="single">
+            <button mat-raised-button color='accent' (click)="joinToPair()">Pair!</button>
+        </div>
+        <div *ngIf="!single">
+            <button mat-raised-button color='accent'>Delete Pair!</button>
+        </div>
     </mat-card-content>
 </mat-card>
