@@ -2,6 +2,8 @@ import { NotificationService } from '../core/services/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Component, Input } from '@angular/core';
 // import { NewButtonComponent } from '../new-button/new-button.component';
+import { AuthService } from '../core/services/auth.service';
+import { SocketService } from '../core/services/socket-service.service';
 
 @Component({
   selector: 'app-lists',
@@ -9,41 +11,30 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./lists.component.scss']
 })
 export class ListsComponent {
-  constructor(public dialog: MatDialog, private ns: NotificationService) {}
 
-  lists = [
-    {
-      name: 'Tesco',
-      items: [
-        { name: 'Bread', checked: true },
-        { name: 'Milk', checked: false },
-        { name: 'Sugar', checked: true },
-        { name: 'Coffee', checked: true },
-        { name: 'Snacks', checked: false },
-        { name: 'Cola', checked: false },
-        { name: 'Water', checked: true },
-      ]
-    },
-    {
-      name: 'Lidl',
-      items: [
-        { name: 'apple', checked: false },
-        { name: 'ham', checked: false },
-        { name: 'cookies', checked: false },
-      ]
-    },
-    {
-      name: 'the birthday party',
-      open: false,
-      items: [
-        { name: 'drinka', checked: true },
-        { name: 'cakes', checked: true },
-        { name: 'presents', checked: true },
-        { name: 'paper cups', checked: true },
-        { name: 'paper plates', checked: true },
-      ]
-    }
-  ]
+  private token: string
+  public lists: any = []
+
+  constructor(
+    public dialog: MatDialog,
+    private ns: NotificationService,
+    private socketService: SocketService,
+    private authService: AuthService
+  ) {
+    this.token = ""
+
+    this.authService.getUserToken().subscribe((data: any) => {
+      this.token = data
+      console.debug(this.token)
+
+      this.socketService.send("getLists", { token: this.token })
+    })
+    this.socketService.listen("getLists").subscribe((data): any => {
+      this.lists = data.data
+      console.debug(data)
+    })
+  }
+
 
   change(): void {
     console.log('dataset is changed. Should save')
@@ -56,16 +47,27 @@ export class ListsComponent {
         items: [],
         open: true
       })
-    } 
+
+      this.socketService.send("createList", {
+        token: this.token,
+        name: name.trim()
+      })
+    }
   }
 
-  deleteList(name:string): void {
+  deleteList(name: string, id: number): void {
+    console.log(id);
     const dialogRef = this.dialog.open(AskDelDialog);
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.lists = this.lists.filter((list: any) => list.name !== name)
         this.ns.show('List deleted')
+
+        this.socketService.send("deleteList", {
+          token: this.token,
+          listId: id
+        });
       }
     });
   }
