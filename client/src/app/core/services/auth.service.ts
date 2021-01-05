@@ -40,6 +40,7 @@ export class AuthService {
       .then(value => { // TODO maybe the value contains the token
         this.getUserToken().subscribe((token: any) => {
           const data = { token }
+          console.log(data)
           this.socketService.send('register', data)
         })
       })
