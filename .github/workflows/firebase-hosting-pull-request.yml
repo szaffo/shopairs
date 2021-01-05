@@ -10,8 +10,7 @@ name: Deploy to Firebase Hosting on PR
 defaults:
   run:
     shell: bash
-    working-directory: client/
-
+    
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
