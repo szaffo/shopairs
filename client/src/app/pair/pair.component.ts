@@ -44,6 +44,7 @@ export class PairComponent implements OnInit {
       console.debug(data);
       if (data.success) {
         this.notificationService.show("You are now paired!")
+        this.router.navigate(['lists'])
       } else {
         this.notificationService.show(data.error)
       }
