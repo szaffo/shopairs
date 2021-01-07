@@ -16,6 +16,10 @@
 		width: 260px;
 		max-width: 100vw;
 		background-color: darken(white, 70) !important;
+		
+		@media screen and (max-width: $mobile-break){
+			background-color: #fafafa !important;
+		}
 	}
 	.mat-drawer-side {
 		border-right: 0 !important;
@@ -51,6 +55,7 @@ h1.example-app-name {
   /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
      causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
   flex: 1;
+  z-index: 9999;
 }
 
 .mat-sidenav-content {
@@ -81,4 +86,8 @@ h1.example-app-name {
 
 .small {
 	padding: 0 !important;
+}
+
+.mat-nav-list {
+	padding-top: 0 !important;
 }
