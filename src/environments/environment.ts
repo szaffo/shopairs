@@ -11,7 +11,8 @@ export const environment = {
     projectId: "shopairs",
     storageBucket: "shopairs.appspot.com",
     messagingSenderId: "1047547323165",
-    appId: "1:1047547323165:web:a0c91553c2a516597d77f4"
+    appId: "1:1047547323165:web:a0c91553c2a516597d77f4",
+    measurementId: "G-LJDJ7D32W0"
   }
 };
 

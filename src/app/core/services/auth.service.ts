@@ -7,6 +7,7 @@ import { Observable, Subscription } from 'rxjs';
 import * as firebase from 'firebase/app';
 import { CookieService } from 'ngx-cookie-service';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireAnalytics } from '@angular/fire/analytics';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class AuthService {
     private router: Router,
     private ns: NotificationService,
     private cookieService: CookieService,
+    private analytics: AngularFireAnalytics
     ) {
       this.user = firebaseAuth.authState;
 
@@ -64,6 +66,9 @@ export class AuthService {
               email: userCredential.user.email
             }).then(() => {
               this.cookieService.delete('loginMethod')
+              if (userCredential.user !== null) {
+                this.analytics.logEvent('emailRegister', { uid: userCredential.user.uid })
+              }
               this.router.navigate(['/lists'])
             })
           }

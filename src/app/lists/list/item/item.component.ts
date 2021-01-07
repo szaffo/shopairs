@@ -1,3 +1,4 @@
+import { AngularFireAnalytics } from '@angular/fire/analytics';
 import { NotificationService } from './../../../core/services/notification.service';
 import { Component, Input, OnInit } from '@angular/core';
 
@@ -14,7 +15,7 @@ export class ItemComponent implements OnInit {
 
   @Input() data: any;
 
-  constructor(private ns: NotificationService) {}
+  constructor(private ns: NotificationService, private analytics: AngularFireAnalytics) {}
 
   ngOnInit(): void {
     this.quantity = this.data.data().quantity
@@ -30,6 +31,10 @@ export class ItemComponent implements OnInit {
   delete(): void {
     this.data.ref.delete().then(() => {
       this.ns.show('Item deleted')
+    }).then(() => {
+      this.analytics.logEvent('itemDelete')
+    }).catch((err: Error) => {
+      this.analytics.logEvent('error', { action: 'itemDelete', message: err.message })
     })
   }
 
@@ -48,6 +53,10 @@ export class ItemComponent implements OnInit {
       name: this.name,
       quantity: this.quantity,
       checked: this.checked
+    }).then(() => {
+      this.analytics.logEvent('itemUpdate')
+    }).catch((err: Error) => {
+      this.analytics.logEvent('error', { action: 'itemUpdate', message: err.message })
     })
   }
 
