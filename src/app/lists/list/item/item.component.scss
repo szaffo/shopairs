@@ -1,3 +1,5 @@
+@import "../../../../assets/styles/variables";
+
 .line {
     // width: 30%;
     transition: background-color 150ms ease-in-out;
@@ -6,7 +8,13 @@
     &:hover {
         background-color: #eee;
         .mat-icon {
-            opacity: 1;
+            opacity: 1 !important;
+        }
+    }
+
+    @media screen and (max-width: $tablet-break) {
+        .mat-icon {
+            opacity: 0.7;
         }
     }
 
