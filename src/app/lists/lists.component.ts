@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Component, Input, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import * as firebase from 'firebase';
+import { AngularFireAnalytics } from '@angular/fire/analytics';
 
 @Component({
   selector: 'app-lists',
@@ -19,7 +20,8 @@ export class ListsComponent implements OnInit {
     public dialog: MatDialog,
     private ns: NotificationService,
     private firestore: AngularFirestore,
-    private cs: CookieService
+    private cs: CookieService,
+    private analytics: AngularFireAnalytics
   ) {}
   
   ngOnInit() {
@@ -43,6 +45,10 @@ export class ListsComponent implements OnInit {
         name: name.trim(),
         commonId: this.cs.get('commonId'),
         created: firebase.default.firestore.FieldValue.serverTimestamp(),
+      }).then(() => {
+        this.analytics.logEvent('listCreated')
+      }).catch((err) => {
+        this.analytics.logEvent('error', { action: 'listCreate', message: err.message })
       })
     }
   }
@@ -54,6 +60,9 @@ export class ListsComponent implements OnInit {
       if (result) {
         data.ref.delete().then(() => {
           this.ns.show('List deleted')
+          this.analytics.logEvent('listDelete')
+        }).catch((err: Error) => {
+          this.analytics.logEvent('error', { action: 'listDelete', message: err.message })
         })
       }
     });
