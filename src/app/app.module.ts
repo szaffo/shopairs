@@ -80,7 +80,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 		AngularFireModule.initializeApp(environment.firebase),
 		AngularFireAuthModule,
 		AngularFirestoreModule,
-		AngularFireAnalyticsModule,
+		AngularFireAnalyticsModule, // TODO make a consent dialog and make analytics opt-out-able
 		// AngularFireMessagingModule,
 		// AngularFireStorageModule,
 		BrowserAnimationsModule,
