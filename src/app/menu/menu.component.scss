@@ -1,10 +1,15 @@
 
 @import "../../assets/styles/variables";
 
-.mat-list {
-	padding-top: 0;
+mat-list {
+	padding-top: 0 !important;
 	.mat-list-item {
 		color: $mi-font3 !important;
+
+		@media screen and (max-width: $mobile-break) {
+			color: #333 !important
+		}
+
 		position: relative;
 		cursor: pointer;
 		outline: none;
@@ -14,17 +19,22 @@
 		-o-transition: background-color .5s ease;
 		-ms-transition: background-color .5s ease;
 		transition: background-color .5s ease;
-		// &:hover,
-		// &:focus {
-		// 	background-color: $bb-bg3-light;
-		// }
-		// &.active {
-		// 	background-color: $bb-secondary;
-		// }
+		&:hover  {
+			background-color: inherit !important;
+		}
+		&.active {
+			background-color: rgba(0, 0, 0, 0.1);
+		}
 	}
 }
 
 .avatar {
+	@media screen and (max-width: $mobile-break){
+		background-color: $mi-cp;
+		:hover {
+			background-color:$mi-cp !important;
+		}
+	}
 	height: auto !important;
 	// margin: 15px 0 0 0;
 	padding: 11px 0 !important;
@@ -38,10 +48,14 @@
 	}
 }
 
-.mat-card {
+.mat-card, .mat-card:hover {
 	box-shadow: none !important;
 	margin: 0 !important;
 	padding: 0 !important;
 	background: transparent !important;
 	color: white;
+
+	@media screen and (max-width: $mobile-break) {
+		// color: #333 !important;
+	}
 }

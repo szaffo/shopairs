@@ -6,8 +6,6 @@ name: Deploy to Firebase Hosting on merge
   push:
     branches:
       - production
-    paths:
-      - "client/**"
 
 defaults:
   run:
