@@ -3,9 +3,8 @@ import { NgModule } from '@angular/core';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-// import { AngularFireMessagingModule } from '@angular/fire/messaging';
-// import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireAnalyticsModule, ScreenTrackingService, UserTrackingService } from '@angular/fire/analytics';
 
 import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -81,6 +80,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 		AngularFireModule.initializeApp(environment.firebase),
 		AngularFireAuthModule,
 		AngularFirestoreModule,
+		AngularFireAnalyticsModule,
 		// AngularFireMessagingModule,
 		// AngularFireStorageModule,
 		BrowserAnimationsModule,
@@ -113,7 +113,9 @@ export class MyHammerConfig extends HammerGestureConfig {
 			provide: HAMMER_GESTURE_CONFIG,
 			useClass: MyHammerConfig,
 		},
-		CookieService
+		CookieService,
+		ScreenTrackingService,
+		UserTrackingService
 	],
 	bootstrap: [AppComponent]
 })

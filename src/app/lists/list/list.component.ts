@@ -1,3 +1,4 @@
+import { AngularFireAnalytics } from '@angular/fire/analytics';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Input, OnInit, Output, EventEmitter, Inject } from '@angular/core';
@@ -26,7 +27,9 @@ export class ListComponent implements OnInit {
     (
       private breakpointObserver: BreakpointObserver,
       public dialog: MatDialog,
-      private firestore: AngularFirestore
+      private firestore: AngularFirestore,
+      private analytics: AngularFireAnalytics
+
     ) {
   }
 
@@ -75,6 +78,10 @@ export class ListComponent implements OnInit {
         chechked: false,
         listId: this.data.id,
         created: firebase.default.firestore.FieldValue.serverTimestamp(),
+      }).then(() => {
+        this.analytics.logEvent('itemAdd')
+      }).catch((err) => {
+        this.analytics.logEvent('error', { action: 'itemAdd', message: err.message })
       })
     }
 
@@ -123,6 +130,10 @@ export class ListComponent implements OnInit {
       if (newName.length > 0 && newName !== this.data.name) {
         this.data.ref.update({
           name: newName
+        }).then(() => {
+          this.analytics.logEvent('listRename')
+        }).catch((err: Error) => {
+          this.analytics.logEvent('error', { action: 'listRename', message: err.message })
         })
       }
     });
