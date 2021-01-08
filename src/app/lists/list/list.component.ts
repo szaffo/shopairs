@@ -1,10 +1,13 @@
 import { AngularFireAnalytics } from '@angular/fire/analytics';
 import { AngularFirestore } from '@angular/fire/firestore';
+import firebase from 'firebase/app';
+import '@firebase/firestore';
+
+
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Input, OnInit, Output, EventEmitter, Inject } from '@angular/core';
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
-import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-list',
@@ -68,6 +71,7 @@ export class ListComponent implements OnInit {
           quantity: item.data().quantity + 1
         })
         found = true
+        this.analytics.logEvent('itemInc')
       }
     });
 
@@ -77,7 +81,7 @@ export class ListComponent implements OnInit {
         quantity: 1,
         chechked: false,
         listId: this.data.id,
-        created: firebase.default.firestore.FieldValue.serverTimestamp(),
+        created: firebase.firestore.FieldValue.serverTimestamp(),
       }).then(() => {
         this.analytics.logEvent('itemAdd')
       }).catch((err) => {

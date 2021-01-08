@@ -134,7 +134,6 @@ export class AppModule {
 		private ns: NotificationService	
 	) {
 		remoteConfig.booleans.maintance.subscribe((maintance) => {
-			console.log(maintance)
 			if (maintance) {
 				this.as.maintanceMode()
 				this.ns.show('Shopairs is in maintance mode. You can not log in now. Come back later', '', {duration: 10000})
