@@ -1,10 +1,12 @@
+import { NotificationService } from './core/services/notification.service';
 import { AuthService } from './core/services/auth.service';
-import { NgModule } from '@angular/core';
+import { isDevMode, NgModule } from '@angular/core';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAnalyticsModule, ScreenTrackingService, UserTrackingService } from '@angular/fire/analytics';
+import { AngularFireRemoteConfig, AngularFireRemoteConfigModule, DEFAULTS, SETTINGS } from '@angular/fire/remote-config';
 
 import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -81,6 +83,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 		AngularFireAuthModule,
 		AngularFirestoreModule,
 		AngularFireAnalyticsModule, // TODO make a consent dialog and make analytics opt-out-able
+		AngularFireRemoteConfigModule,
 		// AngularFireMessagingModule,
 		// AngularFireStorageModule,
 		BrowserAnimationsModule,
@@ -109,14 +112,36 @@ export class MyHammerConfig extends HammerGestureConfig {
 	],
 	providers: [
 		AuthService,
-			{
+		{
 			provide: HAMMER_GESTURE_CONFIG,
 			useClass: MyHammerConfig,
 		},
+		{ provide: DEFAULTS, useValue: { maintance: false } },
+		{
+			provide: SETTINGS,
+			useFactory: () => isDevMode() ? { minimumFetchIntervalMillis: 10_000 } : {}
+		},	
 		CookieService,
 		ScreenTrackingService,
 		UserTrackingService
 	],
 	bootstrap: [AppComponent]
 })
-export class AppModule { }  bootstrap: [AppComponent]
+export class AppModule { 
+	constructor(
+		private remoteConfig: AngularFireRemoteConfig,
+		private as: AuthService,
+		private ns: NotificationService	
+	) {
+		remoteConfig.booleans.maintance.subscribe((maintance) => {
+			console.log(maintance)
+			if (maintance) {
+				this.as.maintanceMode()
+				this.ns.show('Shopairs is in maintance mode. You can not log in now. Come back later', '', {duration: 10000})
+			}
+
+			(maintance && !isDevMode())? this.as.lock() : this.as.unlock()
+
+		})
+	}
+}  bootstrap: [AppComponent]

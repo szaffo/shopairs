@@ -1,19 +1,20 @@
 import 'firebase/firestore';
 import { NotificationService } from './notification.service';
 import { Router } from '@angular/router';
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Observable, Subscription } from 'rxjs';
-import * as firebase from 'firebase/app';
+import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAnalytics } from '@angular/fire/analytics';
+import * as firebase from 'firebase';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   user: Observable<firebase.default.User | null>;
+  locked: boolean = false
 
   constructor(
     private firebaseAuth: AngularFireAuth,
@@ -21,7 +22,7 @@ export class AuthService {
     private router: Router,
     private ns: NotificationService,
     private cookieService: CookieService,
-    private analytics: AngularFireAnalytics
+    private analytics: AngularFireAnalytics,
     ) {
       this.user = firebaseAuth.authState;
 
@@ -36,7 +37,7 @@ export class AuthService {
           })
         }
       })
-  }
+    }
 
   setUsername(displayName: any) {
     this.firebaseAuth.currentUser.then((user) => {
@@ -53,6 +54,11 @@ export class AuthService {
   }
 
   signup(email: string, password: string) {
+    if (this.locked) {
+      this.ns.show('Can not login now')
+      return
+    }
+    
     this.cookieService.set('loginMethod', 'email')
     
     this.firebaseAuth
@@ -81,6 +87,11 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
+    if (this.locked) {
+      this.ns.show('Can not login now')
+      return
+    }
+
     this.cookieService.set('loginMethod', 'email')
     this.firebaseAuth
       .signInWithEmailAndPassword(email, password)
@@ -107,16 +118,18 @@ export class AuthService {
   }
 
   loginGoogle() {
-    this.cookieService.set('loginMethod', 'googleProvider')
+    // this.cookieService.set('loginMethod', 'googleProvider')
     this.loginWithProvider(new  firebase.default.auth.GoogleAuthProvider())
   }
 
   loginFacebook() {
-    this.cookieService.set('loginMethod', 'facebookProvider')
+    // this.cookieService.set('loginMethod', 'facebookProvider')
     this.loginWithProvider(new firebase.default.auth.FacebookAuthProvider())
   }
 
   loginWithProvider(provider: firebase.default.auth.AuthProvider): void {
+    this.ns.show('This login method is unavailable now')
+    return
     this.firebaseAuth.signInWithRedirect(provider)
       .then(value => {
         this.router.navigate(['lists'])
@@ -177,5 +190,20 @@ export class AuthService {
   getUser(): Observable<firebase.default.User | null> {
     return this.firebaseAuth.user
   }
+
+  maintanceMode() {
+    if (!isDevMode()) {
+      this.logout()
+    }
+  }
+
+  lock() {
+    this.locked = true
+  }
+
+  unlock() {
+    this.locked = false
+  }
+
 
 }
