@@ -10,6 +10,9 @@
             <div class="icon-box">
                 <div *ngIf="open; then thenBlock else elseBlock"></div>
                 <ng-template #thenBlock>
+                    <button mat-icon-button aria-label="Share list" (click)="shareDialog($event)">
+                        <mat-icon>people</mat-icon>
+                    </button>
                     <button mat-icon-button aria-label="Delete list" (click)="deleteList($event)">
                         <mat-icon>delete</mat-icon>
                     </button>

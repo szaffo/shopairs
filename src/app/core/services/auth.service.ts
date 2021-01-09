@@ -61,10 +61,10 @@ export class AuthService {
   setUsername(displayName: any) {
     if (this.userData === null) { return }
     
-    this.userData.updateProfile({
-        displayName : displayName
-    }).then(() => {
-      this.ns.show('Settings are saved');
+   this.firestore.collection('users').doc(this.userData.uid).update({
+      name: displayName || ''
+   }).then(() => {
+        this.ns.show('Settings are saved');
     }).catch((err: Error) => {
         console.log(err)
     })
@@ -88,7 +88,8 @@ export class AuthService {
             commonId: '',
             created: firebase.firestore.FieldValue.serverTimestamp(),
             email: userCredential.user.email,
-            family: []
+            family: [],
+            name: userCredential.user.displayName  || ''
           }).then(() => {
             this.cookieService.delete('loginMethod')
             if (userCredential.user !== null) {

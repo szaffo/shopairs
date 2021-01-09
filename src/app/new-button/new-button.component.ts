@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
 })
 export class NewButtonComponent {
   inputValue = ''
-  @Output() result = new EventEmitter<string>()
+  @Output() result = new EventEmitter<{ name: string, share: boolean }>()
   isExtraSmall: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.XSmall);
 
   constructor(
@@ -25,16 +25,16 @@ export class NewButtonComponent {
     this.analytics.logEvent('listCreateStarted')
     const dialogRef = this.dialog.open(CreateListDialog, {
       width: '50%',
-      height: '50%',
+      height: '100%',
       maxWidth: '100vw',
       maxHeight: '100vh',
     });
 
     const smallDialogSubscription = this.isExtraSmall.subscribe((size: any) => {
       if (size.matches) {
-        dialogRef.updateSize('98%', 'auto');
+        dialogRef.updateSize('98%');
       } else {
-        dialogRef.updateSize('600px', 'auto');
+        dialogRef.updateSize('600px');
       }
     });
 
@@ -51,6 +51,7 @@ export class NewButtonComponent {
 })
 export class CreateListDialog {
   inputValue = ''
+  share = true
 
   constructor(
     private dialogRef: MatDialogRef<CreateListDialog>) {
@@ -58,6 +59,9 @@ export class CreateListDialog {
   }
 
   save() {
-    this.dialogRef.close(this.inputValue);
+    this.dialogRef.close({
+      name: this.inputValue,
+      share: this.share
+    });
   }
 }

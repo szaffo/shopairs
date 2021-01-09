@@ -31,6 +31,8 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatTableModule } from '@angular/material/table'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -39,7 +41,7 @@ import { ListsComponent, AskDelDialog } from './lists/lists.component';
 import { NewButtonComponent, CreateListDialog } from './new-button/new-button.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PairComponent } from './pair/pair.component';
-import { ListComponent, RenameListDialog } from './lists/list/list.component';
+import { ListComponent, RenameListDialog, ShareListDialog } from './lists/list/list.component';
 import { ItemComponent } from './lists/list/item/item.component';
 import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
@@ -76,6 +78,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 		PairComponent,
 		LoginComponent,
 		LandingComponent,
+		ShareListDialog
 	],
 	imports: [
 		BrowserModule,
@@ -91,6 +94,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 		ReactiveFormsModule,
 		HttpClientModule,
 		FlexLayoutModule,
+		MatTableModule,
 		MatToolbarModule,
 		MatSidenavModule,
 		MatCardModule,
@@ -106,6 +110,7 @@ export class MyHammerConfig extends HammerGestureConfig {
 		MatSnackBarModule,
 		AppRoutingModule,
 		MatCheckboxModule,
+		MatSlideToggleModule,
 		MatDialogModule,
 		HammerModule,
 		MatProgressSpinnerModule
@@ -136,7 +141,7 @@ export class AppModule {
 		remoteConfig.booleans.maintance.subscribe((maintance) => {
 			if (maintance) {
 				this.as.maintanceMode()
-				this.ns.show('Shopairs is in maintance mode. You can not log in now. Come back later', '', {duration: 10000})
+				this.ns.show('Shopairs is under maintenance. You can not log in now. Come back later', '', {duration: 10000})
 			}
 
 			(maintance && !isDevMode())? this.as.lock() : this.as.unlock()

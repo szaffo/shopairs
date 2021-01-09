@@ -5,8 +5,15 @@
     <mat-label>Name</mat-label>
     <input matInput placeholder="e.g. To dinner" [(ngModel)]="inputValue" (keydown.enter)="save()">
   </mat-form-field>
+
+  <mat-slide-toggle
+      color="accent"
+      [(ngModel)]="share">
+    Share with family group
+  </mat-slide-toggle>
  
 </mat-dialog-content>
+
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
   <button color="accent" mat-raised-button (click)="save()">Create</button>

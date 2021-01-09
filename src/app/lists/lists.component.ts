@@ -41,7 +41,9 @@ export class ListsComponent implements OnInit {
     })
   }
 
-  createList(name: string): void {
+  createList(data: {name: string, share: boolean}): void {
+    const {name, share} = data
+    
     if (name === undefined || name.trim().length <= 0) {
       this.analytics.logEvent('listCreateCancelled')
       return 
@@ -54,7 +56,7 @@ export class ListsComponent implements OnInit {
       created: firebase.firestore.FieldValue.serverTimestamp(),
       shared: [
         userData.email,
-        ...userData.family
+        ...((share)? userData.family : [])
       ]
     }).then(() => {
       this.analytics.logEvent('listCreated')

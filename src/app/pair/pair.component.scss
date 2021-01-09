@@ -1,0 +1,21 @@
+table {
+  width: 100%;
+}
+
+.description {
+    padding: 8px 20px;
+    color: #454545;
+    max-width: 600px;
+    font-size: 0.9em;
+}
+
+.input {
+    width: 100%;
+    max-width: 300px;
+    margin-top: 20px;
+    box-sizing: border-box;
+}
+
+.cell-right {
+  text-align: right;
+}
