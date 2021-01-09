@@ -1,10 +1,11 @@
+import { Subscription } from 'rxjs/internal/Subscription';
+import { AngularFireAnalytics } from '@angular/fire/analytics';
+import { NotificationService } from './../core/services/notification.service';
 import { CookieService } from 'ngx-cookie-service';
-import { Subscription } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../core/services/auth.service';
-import { NotificationService } from "../core/services/notification.service";
-import { v4 as uuidv4 } from 'uuid';
+import { take } from 'rxjs/internal/operators/take';
 
 @Component({
   selector: 'app-pair',
@@ -12,74 +13,99 @@ import { v4 as uuidv4 } from 'uuid';
   styleUrls: ['./pair.component.scss']
 })
 export class PairComponent implements OnInit, OnDestroy {
-  private user$?: Subscription
-  private firestore$?: Subscription
-  public single: boolean
-  public partnerEmail: string
-  public selfUid: string
-  public tokenSubscriber: any
+
+  public inputValue: any = ''
+  private sub: Subscription | null = null
+  public family: any[] = []
+  public displayedColumns = ['name', 'email', 'delete']
 
   constructor(
     private authService: AuthService,
     private firestore: AngularFirestore,
-    private notificationService: NotificationService,
-    private cs: CookieService
+    private ns: NotificationService,
+    private analytics: AngularFireAnalytics
     ) {
-    this.single = true
-    this.partnerEmail = ""
-    this.selfUid = ""
+    
     
   }
 
   ngOnInit(): void {
-    console.debug("Went into the pair component constructor");
-    this.user$ = this.authService.getUser().subscribe((user) => {
-      if (user != null) {
-        this.selfUid = user.uid || ''
-        this.firestore$ = this.firestore.collection("users").doc(user.uid).valueChanges().subscribe((data: any) => {
-          this.single = data.commonId === ''
-
-          if (!this.single) {
-            this.firestore.collection('users').ref.where('commonId', '==', this.cs.get('commonId')).get().then((user: firebase.default.firestore.QuerySnapshot<any>) => {
-              this.partnerEmail = user.docs[0].data().email
-            }).catch((err) => {
-              console.log(err)
+    this.analytics.logEvent('viewFamily')
+    this.authService.getUserDataObservable().pipe(take(1)).subscribe((user: any) => {
+      this.sub = this.firestore.collection('users').doc(user.uid).snapshotChanges().subscribe((userDoc: any) => {
+        // if (userDoc.payload.data().family.length <= 0) {return}
+        this.firestore.collection('users').ref.where('email', 'in', [...userDoc.payload.data().family, '']).get().then((users) => {
+          const data: any[] = []
+          users.docs.forEach((user: any) => {
+            data.push({
+              name: user.data().name,
+              email: user.data().email,
+              uid: user.data().uid
             })
-          } else {
-            this.partnerEmail = ''
-          }
+          })
+          this.family = data
         })
-      }
-    });
+      })     
+    })
+    
   }
 
   ngOnDestroy(): void {
-    console.debug("Went into the pair component destructor");
-    if (this.user$ !== null) {this.user$?.unsubscribe()}
-    if (this.firestore$ !== null) {this.firestore$?.unsubscribe()}
+    this.sub?.unsubscribe()
   }
 
-  joinToPair(): void {
-    const commonId = uuidv4()
-    this.firestore.collection('users').ref.where('email', '==', this.partnerEmail).get().then((partner: any) => {
-      if (partner.docs.length <= 0) {
-        this.notificationService.show('User not found')
-        return
-      }
-      if (partner.docs[0].data().commonId !== '') {
-        this.notificationService.show('The given user is already in a pair')
+  addMember() {
+    if (this.inputValue.trim().length === 0) { return }
+    
+    this.analytics.logEvent('addingFamilyMember')
+    
+    const email = this.inputValue.trim()
+    if (this.family.filter((x) => x.email === email).length > 0) {
+      this.ns.show('User already added to the family')
+      this.analytics.logEvent('failedMemberAdd', { reason: 'alreadyAdded' })
+      this.inputValue = ''
+      return  
+    }
+    
+    
+    
+    this.firestore.collection("users").ref.where('email', '==', this.inputValue).limit(1).get().then((users: any) => {
+      if (users.empty) {
+        this.ns.show('User not found with the given email address')
+        this.analytics.logEvent('failedMemberAdd', { reason: 'notFound' })
       } else {
-        if (this.selfUid !== "") {
-          this.cs.set('commonId', commonId)
-          partner.docs[0].ref.update({
-            commonId
+        this.authService.getUserDataObservable().pipe(take(1)).subscribe((userData) => {
+          this.firestore.collection('users').doc(userData.uid).update({
+            family: [
+              ...userData.family,
+              email
+            ]
+          }).then(() => {
+            this.inputValue = ''
+            this.analytics.logEvent('memberAddSuccess')
+            this.ns.show('Family member successfully added')
+          }).catch((err: Error) => {
+            this.ns.show('Something went wrong')
+            this.analytics.logEvent('error', { action: 'addMember', message: err.message })
           })
-          this.firestore.collection("users").doc(this.selfUid).update({ commonId })
-          this.notificationService.show('Succesfully paired')
-        }
+        })
       }
-    }).catch((err) => {
-      console.log(err)
     })
   }
+
+  deleteMember(email: any) {
+    const members = this.family.map(e => e.email).filter(e => e !== email)
+    this.authService.getUserDataObservable().pipe(take(1)).subscribe((user) => {
+      this.firestore.collection('users').doc(user.uid).update({
+        family: members
+      }).then(() => {
+        this.ns.show('Successfully deleted from family group')
+        this.analytics.logEvent('memberDeleteSuccess')
+      }).catch((err: Error) => {
+        this.ns.show('Something went wrong')
+        this.analytics.logEvent('error', { action: 'deleteMember', message: err.message })
+      })
+    })
+  }
+  
 }

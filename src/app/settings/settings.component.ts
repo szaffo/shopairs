@@ -2,6 +2,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AuthService } from './../core/services/auth.service';
 import { NotificationService } from '../core/services/notification.service';
 import { Component, OnInit } from '@angular/core';
+import { take } from 'rxjs/internal/operators/take';
 
 @Component({
   selector: 'app-settings',
@@ -15,21 +16,22 @@ export class SettingsComponent implements OnInit {
     email: ''
   }
 
+
+
   constructor(private ns: NotificationService, private authService: AuthService, private afu: AngularFireAuth) {
     
   }
 
   ngOnInit(): void {
-    this.authService.getUser().subscribe((user) => {
+    this.authService.getUserDataObservable().pipe(take(1)).subscribe((user) => {
       if (user) {
-        this.user.displayName = user.displayName
+        this.user.displayName = user.name
         this.user.email = user.email
       }
     })
   }
 
   openSnackBar() {
-    console.log(this.user.displayName)
     this.authService.setUsername(this.user.displayName)
   }
 }

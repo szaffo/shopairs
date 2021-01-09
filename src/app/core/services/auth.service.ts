@@ -1,20 +1,25 @@
-import 'firebase/firestore';
-import { NotificationService } from './notification.service';
+import firebase from 'firebase/app';
+import '@firebase/firestore';
+import '@firebase/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAnalytics } from '@angular/fire/analytics';
+
 import { Router } from '@angular/router';
 import { Injectable, isDevMode } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
+
 import { CookieService } from 'ngx-cookie-service';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { AngularFireAnalytics } from '@angular/fire/analytics';
-import * as firebase from 'firebase';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  user: Observable<firebase.default.User | null>;
   locked: boolean = false
+  private userData: any = null
+  private userDataChange: Observable<any>
 
   constructor(
     private firebaseAuth: AngularFireAuth,
@@ -24,34 +29,46 @@ export class AuthService {
     private cookieService: CookieService,
     private analytics: AngularFireAnalytics,
     ) {
-      this.user = firebaseAuth.authState;
+      // this.user = firebaseAuth.authState;
+      
+      this.userDataChange = new Observable((observer) => {
+        firebaseAuth.authState.subscribe((user: any) => {
+          if (user === null) {
+            observer.next(null)
+          } else {
+            this.firestore.collection('users').doc(user.uid).get().pipe(take(1)).subscribe((userDoc: firebase.firestore.DocumentSnapshot<any>) => {
+              const userData = {
+                ...user,
+                ...userDoc.data()
+              }
+              observer.next(userData)
+            })
+          }
+        })
+      })
 
-      this.user.subscribe((user: any) => {
-        if (user === null) {
-          this.cookieService.set('commonId', '')
+      this.userDataChange.subscribe((userData) => {
+        this.userData = userData
+        if (userData === null) {
+          this.router.navigate(['/login'])
         } else {
-          this.firestore.collection('users').doc(user.uid).get().subscribe((doc: firebase.default.firestore.DocumentSnapshot<any>) => {
-            const commonId = doc.data().commonId
-            this.cookieService.set('commonId', commonId)
-            if (this.router.url === '/register' || this.router.url === '/login') { this.router.navigate(['lists']) }
-          })
+          if (this.router.url === '/register' || this.router.url === '/login' || this.router.url === '/') { this.router.navigate(['lists']) }
         }
       })
-    }
+  }
+
 
   setUsername(displayName: any) {
-    this.firebaseAuth.currentUser.then((user) => {
-      if (user != null) {
-        user.updateProfile({
-          displayName : displayName
-        }).then(() => {
-          this.ns.show('Settings are saved');
-        }).catch((err) => {
-          console.log(err)
-        })
-      }
+    if (this.userData === null) { return }
+    
+   this.firestore.collection('users').doc(this.userData.uid).update({
+      name: displayName || ''
+   }).then(() => {
+        this.ns.show('Settings are saved');
+    }).catch((err: Error) => {
+        console.log(err)
     })
-  }
+   }
 
   signup(email: string, password: string) {
     if (this.locked) {
@@ -64,20 +81,24 @@ export class AuthService {
     this.firebaseAuth
       .createUserWithEmailAndPassword(email, password)
         .then(userCredential => {
-          if (userCredential.user !== null) {
-            this.firestore.collection("users").doc(userCredential.user.uid).set({
-              uid: userCredential.user.uid,
-              commonId: '',
-              created: firebase.default.firestore.FieldValue.serverTimestamp(),
-              email: userCredential.user.email
-            }).then(() => {
-              this.cookieService.delete('loginMethod')
-              if (userCredential.user !== null) {
-                this.analytics.logEvent('emailRegister', { uid: userCredential.user.uid })
-              }
-              this.router.navigate(['/lists'])
-            })
-          }
+          if (userCredential.user === null) { return }
+            
+          this.firestore.collection("users").doc(userCredential.user.uid).set({
+            uid: userCredential.user.uid,
+            commonId: '',
+            created: firebase.firestore.FieldValue.serverTimestamp(),
+            email: userCredential.user.email,
+            family: [],
+            name: userCredential.user.displayName  || ''
+          }).then(() => {
+            this.cookieService.delete('loginMethod')
+            if (userCredential.user !== null) {
+              this.analytics.logEvent('register', { uid: userCredential.user.uid, provider: 'email' })
+            }
+          }).catch((err: Error) => {
+            this.ns.show(this.handleErrors(err))
+          })
+          
         })
         .catch(err => {
           this.ns.show(this.handleErrors(err))
@@ -95,9 +116,6 @@ export class AuthService {
     this.cookieService.set('loginMethod', 'email')
     this.firebaseAuth
       .signInWithEmailAndPassword(email, password)
-      .then(() => {
-        // this.router.navigate(['lists'])
-      })
       .catch(err => {
         this.ns.show(this.handleErrors(err))
         this.cookieService.delete('loginMethod')
@@ -109,9 +127,6 @@ export class AuthService {
     this.cookieService.delete('loginMethod')
     this.cookieService.set('commonId', '')
     this.firebaseAuth.signOut()
-      .then(() => {
-        this.router.navigate(['/'])
-      })
       .catch((err) => {
         this.ns.show(this.handleErrors(err)) 
       })
@@ -119,15 +134,15 @@ export class AuthService {
 
   loginGoogle() {
     // this.cookieService.set('loginMethod', 'googleProvider')
-    this.loginWithProvider(new  firebase.default.auth.GoogleAuthProvider())
+    this.loginWithProvider(new  firebase.auth.GoogleAuthProvider())
   }
 
   loginFacebook() {
     // this.cookieService.set('loginMethod', 'facebookProvider')
-    this.loginWithProvider(new firebase.default.auth.FacebookAuthProvider())
+    this.loginWithProvider(new firebase.auth.FacebookAuthProvider())
   }
 
-  loginWithProvider(provider: firebase.default.auth.AuthProvider): void {
+  loginWithProvider(provider: firebase.auth.AuthProvider): void {
     this.ns.show('This login method is unavailable now')
     return
     this.firebaseAuth.signInWithRedirect(provider)
@@ -157,19 +172,6 @@ export class AuthService {
     })
   }
 
-  checkLogin(): void {
-    this.user.subscribe((user:any) => {
-      if (user) {
-        console.debug('User logged in')
-        this.router.navigate(['lists'])
-      } else {
-        this.cookieService.delete('loginMethod')
-        this.cookieService.set('commonId', '')
-      }
-    })
-          
-  }
-
   handleErrors(error: any): string {
     if (!error || !error.code) { return 'Something went wrong' }
     else if (error.code === 'auth/user-not-found') { return 'No user found corresponding with this sign in method' }
@@ -187,8 +189,16 @@ export class AuthService {
     return this.firebaseAuth.idToken
   }
 
-  getUser(): Observable<firebase.default.User | null> {
+  getUser(): Observable<firebase.User | null> {
     return this.firebaseAuth.user
+  }
+  
+  getUserData() {
+    return this.userData
+  }
+
+  getUserDataObservable(): Observable<any> {
+    return this.userDataChange
   }
 
   maintanceMode() {

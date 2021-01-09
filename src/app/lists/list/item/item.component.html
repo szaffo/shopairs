@@ -1,8 +1,8 @@
 <div class="line" fxLayout="row" fxLayoutAlign="space-between center" >
     <mat-checkbox [checked]="this.checked" (change)="this.check()">
-            {{ data.data().name }}
+            <span class="dotdotdot">{{ data.data().name }}</span>
     </mat-checkbox>
-    <div> 
+    <div class="info-holder"> 
         <span class="details">
                 <button (click)="decQuantity(data.id)" mat-icon-button aria-label="Increase quantity">
                     <mat-icon>remove</mat-icon>

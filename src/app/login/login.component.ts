@@ -24,17 +24,7 @@ export class LoginComponent {
     this.register = this.router.url == '/register'
   }
 
-  ngOnInit(): void {
-
-    if (this.cookiService.check('loginMethod')) {
-      if (this.cookiService.get('loginMethod') === 'email') {
-        // this.authService.checkLogin() // TODO commented for testing something
-      } else {
-        this.authService.checkRedirect()
-      }
-    }
-    // this.authService.checkRedirect()
-  }
+  ngOnInit(): void {}
 
   signup() {
     if (!this.email || !this.password) {return}
