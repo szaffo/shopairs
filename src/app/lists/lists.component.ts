@@ -1,10 +1,13 @@
-import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from './../core/services/auth.service';
 import { NotificationService } from '../core/services/notification.service';
 import { MatDialog } from '@angular/material/dialog';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import * as firebase from 'firebase';
 import { AngularFireAnalytics } from '@angular/fire/analytics';
+import { take } from "rxjs/operators";
+
+import firebase from 'firebase/app';
+import '@firebase/firestore';
 
 @Component({
   selector: 'app-lists',
@@ -14,55 +17,71 @@ import { AngularFireAnalytics } from '@angular/fire/analytics';
 export class ListsComponent implements OnInit {
 
   public lists: any = []
-  private inPair: boolean = true
 
   constructor(
     public dialog: MatDialog,
     private ns: NotificationService,
     private firestore: AngularFirestore,
-    private cs: CookieService,
-    private analytics: AngularFireAnalytics
+    private analytics: AngularFireAnalytics,
+    private as: AuthService
   ) {}
   
   ngOnInit() {
-    console.debug('Lists oninit')
-    const commonId = this.cs.get('commonId')
-    if (commonId !== null || commonId !== '') {
-      this.firestore.collection('lists').ref.where('commonId', '==', commonId).orderBy('created', 'desc').onSnapshot({
-        next: (data: firebase.default.firestore.QuerySnapshot<any>) => {
+    this.as.getUserDataObservable().pipe(take(1)).subscribe((userData) => {
+      if (userData === null) {return}
+      
+      this.firestore.collection('lists').ref.where('shared', 'array-contains', userData.email).orderBy('created', 'desc').onSnapshot({
+        next: (data: firebase.firestore.QuerySnapshot<any>) => {
           this.lists = []
           data.docs.forEach((data) => {
             this.lists.push(data)
           })
         }
-      })
-    }
+      })  
+    })
   }
 
-  createList(name: string): void {
-    if (name.trim().length > 0) {
-      this.firestore.collection('lists').add({
-        name: name.trim(),
-        commonId: this.cs.get('commonId'),
-        created: firebase.default.firestore.FieldValue.serverTimestamp(),
-      }).then(() => {
-        this.analytics.logEvent('listCreated')
-      }).catch((err) => {
-        this.analytics.logEvent('error', { action: 'listCreate', message: err.message })
-      })
+  createList(data: {name: string, share: boolean}): void {
+    const {name, share} = data
+    
+    if (name === undefined || name.trim().length <= 0) {
+      this.analytics.logEvent('listCreateCancelled')
+      return 
     }
+    
+    const userData = this.as.getUserData()
+      
+    this.firestore.collection('lists').add({
+      name: name.trim(),
+      created: firebase.firestore.FieldValue.serverTimestamp(),
+      shared: [
+        userData.email,
+        ...((share)? userData.family : [])
+      ]
+    }).then(() => {
+      this.analytics.logEvent('listCreated')
+    }).catch((err) => {
+      this.analytics.logEvent('error', { action: 'listCreate', message: err.message })
+    })
+
   }
 
   deleteList(data: any): void {
     const dialogRef = this.dialog.open(AskDelDialog);
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().pipe(take(1)).subscribe(result => {
       if (result) {
         data.ref.delete().then(() => {
           this.ns.show('List deleted')
           this.analytics.logEvent('listDelete')
         }).catch((err: Error) => {
           this.analytics.logEvent('error', { action: 'listDelete', message: err.message })
+        })
+
+        this.firestore.collection('items').ref.where('listId', '==', data.id).get().then((items: firebase.firestore.QuerySnapshot<any>) => {
+          items.docs.forEach((doc) => {
+            doc.ref.delete()
+          })
         })
       }
     });

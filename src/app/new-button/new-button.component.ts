@@ -1,8 +1,7 @@
-import { NotificationService } from './../core/services/notification.service';
-import { CookieService } from 'ngx-cookie-service';
+import { AngularFireAnalytics } from '@angular/fire/analytics';
 import { EventEmitter } from '@angular/core';
 import { Component , Output } from '@angular/core';
-import { MatDialog, MatDialogRef} from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 
@@ -13,28 +12,29 @@ import { Observable } from 'rxjs';
 })
 export class NewButtonComponent {
   inputValue = ''
-  @Output() result = new EventEmitter<string>()
+  @Output() result = new EventEmitter<{ name: string, share: boolean }>()
   isExtraSmall: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.XSmall);
 
-  constructor(private breakpointObserver: BreakpointObserver, public dialog: MatDialog, private cs: CookieService, private ns: NotificationService) { }
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    public dialog: MatDialog,
+    private analytics: AngularFireAnalytics
+  ) {}
 
   openDialog() {
-    if (this.cs.get('commonId') == '') {
-      this.ns.show("You have to pair with somebody to create a list")
-      return
-    }
+    this.analytics.logEvent('listCreateStarted')
     const dialogRef = this.dialog.open(CreateListDialog, {
       width: '50%',
-      height: '50%',
+      height: '100%',
       maxWidth: '100vw',
       maxHeight: '100vh',
     });
 
     const smallDialogSubscription = this.isExtraSmall.subscribe((size: any) => {
       if (size.matches) {
-        dialogRef.updateSize('98%', 'auto');
+        dialogRef.updateSize('98%');
       } else {
-        dialogRef.updateSize('600px', 'auto');
+        dialogRef.updateSize('600px');
       }
     });
 
@@ -51,6 +51,7 @@ export class NewButtonComponent {
 })
 export class CreateListDialog {
   inputValue = ''
+  share = true
 
   constructor(
     private dialogRef: MatDialogRef<CreateListDialog>) {
@@ -58,6 +59,9 @@ export class CreateListDialog {
   }
 
   save() {
-    this.dialogRef.close(this.inputValue);
+    this.dialogRef.close({
+      name: this.inputValue,
+      share: this.share
+    });
   }
 }
